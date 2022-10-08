@@ -63,7 +63,7 @@ return {
         end
         
         labelComponent:Set{
-            Text = ("Current target: "):format(if player ~= nil then player.Name else "None"),
+            Text = "Current target: " .. if player ~= nil then tostring(player.Name) else "None",
             Color = if player ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
         }
         targetPlayer = player
