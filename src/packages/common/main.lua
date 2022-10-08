@@ -1,6 +1,6 @@
 local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
 
-local FlyAPI = import('/packages/common/fly')
+local FlyAPI = import('packages/common/fly')
 FlyAPI.Start()
 
 return {

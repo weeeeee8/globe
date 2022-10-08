@@ -11,7 +11,7 @@ local function import(asset)
         return e
     else
         local src = loadstring(
-            game:HttpGet('https://raw.githubusercontent.com/weeeeee8/globe/main/src' .. asset .. '.lua')
+            game:HttpGet('https://raw.githubusercontent.com/weeeeee8/globe/main/src/' .. asset .. '.lua')
         )()
         IMPORT_CACHE[asset] = src
         return src
