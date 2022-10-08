@@ -33,7 +33,7 @@ return {
                     Enabled = false,
                     GetOverride = function(original)
                         if mouse.Target then
-                            return {End = CFrame.new(mouse.Hit.Position + Vector3.new(0, 4, 0))}
+                            return {Origin = original.Origin, End = CFrame.new(mouse.Hit.Position + Vector3.new(0, 4, 0))}
                         end
                         return original
                     end,
