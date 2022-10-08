@@ -5,5 +5,5 @@ local Windw = shaman:Window{
     Text = "Globe"
 }
 
-local genericPlugins = import('/packages/generic/common')
-genericPlugins.init(Windw)
+local commonPlugins = import('/packages/common/main')
+commonPlugins.init(Windw)
