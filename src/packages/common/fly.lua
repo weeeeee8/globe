@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 
 local activeRenderUpdate
 local activeInputListeners = {}
@@ -90,7 +91,7 @@ return {
             end
         end)
     
-        table.insert(activeInputListeners, UserSettings.InputBegan:Connect(function(input, gpe)
+        table.insert(activeInputListeners, UserInputService.InputBegan:Connect(function(input, gpe)
             if gpe then return end
             if input.KeyCode == Enum.KeyCode.A then
                 activeInputs.Left = true
