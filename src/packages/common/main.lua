@@ -66,7 +66,7 @@ return {
 
             teleportSection:Input{
                 Text = "Target player",
-                Placeholder = "Player display name / Player name",
+                Placeholder = "Player DisplayName / Name",
                 Callback = function(v)
                     TeleportAPI.SetTargetPlayer(v, label)
                 end
@@ -75,7 +75,8 @@ return {
 
         local function buildRejoiningSection()
             local rejoinSection = tab:Section{
-                Text = "Rejoining Options"
+                Text = "Rejoining Options",
+                Side = "Right",
             }
 
             rejoinSection:Button{

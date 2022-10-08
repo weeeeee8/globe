@@ -39,7 +39,7 @@ return {
         if mouse.Target ~= nil then
             local hrp = getHRP()
             if hrp then
-                hrp.Position = mousepos + Vector3.new(0, 4, 0)
+                hrp.CFrame = CFrame.new(mousepos + Vector3.new(0, 4, 0))
             end
         end
     end,
@@ -63,8 +63,8 @@ return {
         end
         
         labelComponent:Set{
-            Text = string.format("Current target: ", if player then player.Name else "None"),
-            Color = if player then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
+            Text = ("Current target: "):format(if player ~= nil then player.Name else "None"),
+            Color = if player ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
         }
         targetPlayer = player
     end
