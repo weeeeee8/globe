@@ -58,8 +58,10 @@ return {
                         local SpellName = realArgs[2]
                         local foundSpoofedData = spoofedSpells[SpellName]
                         if foundSpoofedData ~= nil and foundSpoofedData.Enabled == true then
-                            local fakeArgs = {...}
-                            local newData = foundSpoofedData.GetOverride(originalData)
+                            local fakeArgs = {}
+                            fakeArgs[1] = realArgs[1]
+                            fakeArgs[2] = realArgs[2]
+                            local newData = foundSpoofedData.GetOverride(realArgs[3])
                             fakeArgs[3] = newData
                             return old(self, unpack(fakeArgs))
                         else
