@@ -5,8 +5,9 @@ FlyAPI.Start()
 
 return {
     init = function(windw)
+        local tab = windw:Tab{Text = "Common"}
         local function buildFlySection()
-            local flySection = windw:Section{
+            local flySection = tab:Section{
                 Text = "Fly"
             }
 
