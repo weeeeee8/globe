@@ -75,14 +75,14 @@ return {
             end)
 
             spellSpoofSection:Toggle{
-                Text = "Spoof Lightning Flash",
+                Text = "Lightning Flash",
                 Callback = function(v)
                     spoofedSpells['Lightning Flash'].Enabled = v
                 end
             }
             
             spellSpoofSection:Toggle{
-                Text = "Spoof Lightning Barrage",
+                Text = "Lightning Barrage",
                 Callback = function(v)
                     spoofedSpells['Lightning Barrage'].Enabled = v
                 end
