@@ -3,6 +3,9 @@ local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not
 local FlyAPI = import('packages/common/fly')
 FlyAPI.Start()
 
+local TeleportAPI = import('packages/common/teleport')
+TeleportAPI.Start()
+
 return {
     init = function(windw)
         local tab = windw:Tab{Text = "Common"}
@@ -29,7 +32,39 @@ return {
                 Callback = FlyAPI.SetSpeed
             }
         end
+        
+        local function buildTeleportSection()
+            local teleportSection = tab:Section{
+                Text = "Teleport Options"
+            }
+
+            teleportSection:Keybind{
+                Text = "Toggle Mouse Teleport",
+                Default = Enum.KeyCode.T,
+                Callback = TeleportAPI.ToggleMouseTeleport
+            }
+
+            teleportSection:Keybind{
+                Text = "Toggle Player TEleport",
+                Default = Enum.KeyCode.G,
+                Callback = TeleportAPI.TogglePlayerTeleport
+            }
+
+            teleportSection:Keybind{
+                Text = "Toggle Stick to",
+                Default = Enum.KeyCode.H,
+                Callback = TeleportAPI.ToggleStickTo
+            }
+
+            teleportSection:Input{
+                Text = "Target player",
+                Placeholder = "Player display name / Player name",
+                Callback = TeleportAPI.SetTargetPlayer
+            }
+        end
 
         buildFlySection()
+        buildTeleportSection()
+        tab:Select()
     end
 }

@@ -2,10 +2,6 @@ local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 
-local activeRenderUpdate
-local activeInputListeners = {}
-local activeCollisionUpdate
-
 local velocityObject, gyroObject
 local activeInputs = {
     Left = false,
@@ -28,35 +24,7 @@ end
 
 return {
     Start = function()
-        if activeRenderUpdate then
-            for _, v in ipairs(activeInputListeners) do
-                v:Disconnect()
-            end
-            table.clear(activeInputListeners)
-    
-            activeRenderUpdate:Disconnect()
-            activeRenderUpdate = nil
-    
-            activeCollisionUpdate:Disconnect()
-            activeCollisionUpdate = nil
-            
-            if velocityObject then
-                velocityObject:Destroy()
-                velocityObject = nil
-            end
-    
-            if gyroObject then
-                gyroObject:Destroy()
-                gyroObject = nil
-            end
-            
-            local hum = getHum()
-            if hum then
-                hum.AutoRotate = true
-            end
-        end
-
-        activeRenderUpdate = RunService.RenderStepped:Connect(function(deltaTime)
+        oh.Maid:GiveTask(RunService.RenderStepped:Connect(function(deltaTime)
             if toggled then
                 local f = Vector3.zero
                 if activeInputs.Forward then
@@ -79,9 +47,9 @@ return {
                     gyroObject.CFrame = workspace.CurrentCamera.CFrame
                 end
             end
-        end)
+        end))
     
-        activeCollisionUpdate = RunService.Stepped:Connect(function(time, deltaTime)
+        oh.Maid:GiveTask(RunService.Stepped:Connect(function(time, deltaTime)
             if toggled and shouldNoClip then
                 for _, v in ipairs(Players.LocalPlayer.Character:GetChildren()) do
                     if v:IsA("BasePart") then
@@ -89,9 +57,9 @@ return {
                     end
                 end
             end
-        end)
+        end))
     
-        table.insert(activeInputListeners, UserInputService.InputBegan:Connect(function(input, gpe)
+        oh.Maid:GiveTask(UserInputService.InputBegan:Connect(function(input, gpe)
             if gpe then return end
             if input.KeyCode == Enum.KeyCode.A then
                 activeInputs.Left = true
@@ -106,7 +74,7 @@ return {
                 activeInputs.Forward = true
             end
         end))
-        table.insert(activeInputListeners, UserInputService.InputEnded:Connect(function(input, gpe)
+        oh.Maid:GiveTask(UserInputService.InputEnded:Connect(function(input, gpe)
             if input.KeyCode == Enum.KeyCode.A then
                 activeInputs.Left = false
             end
