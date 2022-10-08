@@ -31,6 +31,7 @@ return {
             local spoofedSpells = {
                 ['Lightning Flash'] = false,
                 ['Lightning Barrage'] = false,
+                ['Splitting Slime'] = false,
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
             
@@ -62,19 +63,14 @@ return {
                 return old(self, ...)
             end)
 
-            spellSpoofSection:Toggle{
-                Text = "Lightning Flash",
-                Callback = function(v)
-                    spoofedSpells['Lightning Flash'] = v
-                end
-            }
-            
-            spellSpoofSection:Toggle{
-                Text = "Lightning Barrage",
-                Callback = function(v)
-                    spoofedSpells['Lightning Barrage'] = v
-                end
-            }
+            for k, _ in pairs(spoofedSpells) do
+                spellSpoofSection:Toggle{
+                    Text = k,
+                    Callback = function(v)
+                        spoofedSpells[k] = v
+                    end
+                }
+            end
         end
 
         buildSpellSpoofSection()
