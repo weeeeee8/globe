@@ -40,7 +40,7 @@ return {
                 },
                 ['Lightning Barrage'] = {
                     Enabled = false,
-                    Callback = function(original)
+                    GetOverride = function(original)
                         if mouse.Target then
                             local pos = mouse.Hit.Position
                             return {Direction = CFrame.lookAt(pos - Vector3.new(0, 10, 0), pos)}
@@ -58,13 +58,12 @@ return {
                         local SpellName = realArgs[2]
                         local foundSpoofedData = spoofedSpells[SpellName]
                         if foundSpoofedData ~= nil and foundSpoofedData.Enabled == true then
-                            local fakeArgs = deepCopy(realArgs)
-                            local originalData = table.remove(fakeArgs, 3)
+                            local fakeArgs = {...}
                             local newData = foundSpoofedData.GetOverride(originalData)
-                            table.insert(fakeArgs, newData)
+                            fakeArgs[3] = newData
                             return old(self, unpack(fakeArgs))
                         else
-                            return old(self, unpack(realArgs))
+                            return old(self, ...)
                         end
                     end
                 end
