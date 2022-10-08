@@ -63,6 +63,7 @@ return {
                             fakeArgs[2] = realArgs[2]
                             local newData = foundSpoofedData.GetOverride(realArgs[3])
                             fakeArgs[3] = newData
+                            print(unpack(fakeArgs))
                             return old(self, unpack(fakeArgs))
                         else
                             return old(self, ...)
