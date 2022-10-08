@@ -67,5 +67,7 @@ return {
                 return old(self, ...)
             end)
         end
+
+        buildSpellSpoofSection()
     end
 }
