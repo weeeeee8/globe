@@ -55,14 +55,14 @@ return {
                         local realArgs = {...}
                         local SpellName = realArgs[2]
                         local foundSpoofedData = spoofedSpells[SpellName]
-                        if foundSpoofedData.Enabled ~= nil and foundSpoofedData.Enabled == true then
+                        if foundSpoofedData ~= nil and foundSpoofedData.Enabled == true then
                             local fakeArgs = deepCopy(realArgs)
                             local originalData = table.remove(fakeArgs, 3)
                             local newData = foundSpoofedData.GetOverride()
                             table.insert(fakeArgs, if newData ~= nil then newData else originalData)
                             return old(self, unpack(fakeArgs))
                         else
-                            return old(self, ...)
+                            return old(self, unpack(realArgs))
                         end
                     end
                 end
