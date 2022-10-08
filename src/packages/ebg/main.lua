@@ -29,25 +29,8 @@ return {
         local function buildSpellSpoofSection()
             local remote = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local spoofedSpells = {
-                ['Lightning Flash'] = {
-                    Enabled = false,
-                    GetOverride = function(original)
-                        if mouse.Target then
-                            return {Origin = original.Origin, End = CFrame.new(mouse.Hit.Position + Vector3.new(0, 4, 0))}
-                        end
-                        return original
-                    end,
-                },
-                ['Lightning Barrage'] = {
-                    Enabled = false,
-                    GetOverride = function(original)
-                        if mouse.Target then
-                            local pos = mouse.Hit.Position
-                            return {Direction = CFrame.lookAt(pos - Vector3.new(0, 10, 0), pos)}
-                        end
-                        return original
-                    end
-                },
+                ['Lightning Flash'] = false,
+                ['Lightning Barrage'] = false,
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
             
@@ -57,16 +40,20 @@ return {
                         local realArgs = {...}
                         local SpellName = realArgs[2]
                         local foundSpoofedData = spoofedSpells[SpellName]
-                        if foundSpoofedData ~= nil and foundSpoofedData.Enabled == true then
+                        if foundSpoofedData then
                             local fakeArgs = {}
                             fakeArgs[1] = realArgs[1]
                             fakeArgs[2] = realArgs[2]
-                            local newData = foundSpoofedData.GetOverride(realArgs[3])
-                            fakeArgs[3] = newData
+                            if SpellName == "Lightning Flash" then
+                                fakeArgs[3] = {}
+                                fakeArgs[3].Origin = realArgs[3].Origin
+                                fakeArgs[3].End = if mouse.Target then mouse.Hit.Position else realArgs[3].End
+                            elseif SpellName == "Lightning Barrage" then
+                                fakeArgs[3] = {}
+                                fakeArgs[3].Direction = if mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 10, 0), mouse.Hit.Position) else realArgs[3].Direction
+                            end
                             print(unpack(fakeArgs))
                             return old(self, unpack(fakeArgs))
-                        else
-                            return old(self, ...)
                         end
                     end
                 end
@@ -77,14 +64,14 @@ return {
             spellSpoofSection:Toggle{
                 Text = "Lightning Flash",
                 Callback = function(v)
-                    spoofedSpells['Lightning Flash'].Enabled = v
+                    spoofedSpells['Lightning Flash'] = v
                 end
             }
             
             spellSpoofSection:Toggle{
                 Text = "Lightning Barrage",
                 Callback = function(v)
-                    spoofedSpells['Lightning Barrage'].Enabled = v
+                    spoofedSpells['Lightning Barrage'] = v
                 end
             }
         end
