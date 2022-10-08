@@ -50,9 +50,10 @@ return {
                                 fakeArgs[3].End = if mouse.Target then mouse.Hit.Position else realArgs[3].End
                             elseif SpellName == "Lightning Barrage" then
                                 fakeArgs[3] = {}
-                                fakeArgs[3].Direction = if mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 10, 0), mouse.Hit.Position) else realArgs[3].Direction
+                                fakeArgs[3].Direction = if mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 15, 0), mouse.Hit.Position) else realArgs[3].Direction
+                            elseif SpellName == "Splitting Slime" then
+                                fakeArgs[3] = if mouse.Target then mouse.Hit else realArgs[3]
                             end
-                            print(unpack(fakeArgs))
                             return old(self, unpack(fakeArgs))
                         end
                     end
