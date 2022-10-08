@@ -53,7 +53,7 @@ return {
             }
 
             teleportSection:Keybind{
-                Text = "Toggle Player TEleport",
+                Text = "Toggle Player Teleport",
                 Default = Enum.KeyCode.G,
                 Callback = TeleportAPI.TogglePlayerTeleport
             }
