@@ -31,19 +31,21 @@ return {
             local spoofedSpells = {
                 ['Lightning Flash'] = {
                     Enabled = false,
-                    GetOverride = function()
+                    GetOverride = function(original)
                         if mouse.Target then
                             return {End = CFrame.new(mouse.Hit.Position + Vector3.new(0, 4, 0))}
                         end
+                        return original
                     end,
                 },
                 ['Lightning Barrage'] = {
                     Enabled = false,
-                    Callback = function()
+                    Callback = function(original)
                         if mouse.Target then
                             local pos = mouse.Hit.Position
                             return {Direction = CFrame.lookAt(pos - Vector3.new(0, 10, 0), pos)}
                         end
+                        return original
                     end
                 },
             }
@@ -58,8 +60,8 @@ return {
                         if foundSpoofedData ~= nil and foundSpoofedData.Enabled == true then
                             local fakeArgs = deepCopy(realArgs)
                             local originalData = table.remove(fakeArgs, 3)
-                            local newData = foundSpoofedData.GetOverride()
-                            table.insert(fakeArgs, if newData ~= nil then newData else originalData)
+                            local newData = foundSpoofedData.GetOverride(originalData)
+                            table.insert(fakeArgs, newData)
                             return old(self, unpack(fakeArgs))
                         else
                             return old(self, unpack(realArgs))
