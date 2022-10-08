@@ -32,6 +32,8 @@ return {
                 ['Lightning Flash'] = false,
                 ['Lightning Barrage'] = false,
                 ['Splitting Slime'] = false,
+                ['Illusive Atake'] = false,
+                ['Blaze Column'] = false,
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
             
