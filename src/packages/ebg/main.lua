@@ -37,35 +37,52 @@ return {
                         end
                     end,
                 },
-                ['Lightning Barrage'] = function()
-                    if mouse.Target then
-                        local pos = mouse.Hit.Position
-                        return {Direction = CFrame.lookAt(pos - Vector3.new(0, 10, 0), pos)}
+                ['Lightning Barrage'] = {
+                    Enabled = false,
+                    Callback = function()
+                        if mouse.Target then
+                            local pos = mouse.Hit.Position
+                            return {Direction = CFrame.lookAt(pos - Vector3.new(0, 10, 0), pos)}
+                        end
                     end
-                end,
+                },
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
             
             local old; old = hookmetamethod(game, '__namecall', function(self, ...)
                 if not checkcaller() then
-                    if getnamecallmethod() == "InvokeServer" then
-                        if self == remote then
-                            local realArgs = {...}
-                            local SpellName = realArgs[2]
-                            local foundSpoofedData = spoofedSpells[SpellName]
-                            if foundSpoofedData.Enabled ~= nil and foundSpoofedData.Enabled == true then
-                                local fakeArgs = deepCopy(realArgs)
-                                local originalData = table.remove(fakeArgs, 3)
-                                local newData = foundSpoofedData.GetOverride()
-                                table.insert(fakeArgs, if newData ~= nil then newData else originalData)
-                                return old(self, unpack(fakeArgs))
-                            end
+                    if getnamecallmethod() == "InvokeServer" and self == remote then
+                        local realArgs = {...}
+                        local SpellName = realArgs[2]
+                        local foundSpoofedData = spoofedSpells[SpellName]
+                        if foundSpoofedData.Enabled ~= nil and foundSpoofedData.Enabled == true then
+                            local fakeArgs = deepCopy(realArgs)
+                            local originalData = table.remove(fakeArgs, 3)
+                            local newData = foundSpoofedData.GetOverride()
+                            table.insert(fakeArgs, if newData ~= nil then newData else originalData)
+                            return old(self, unpack(fakeArgs))
+                        else
+                            return old(self, ...)
                         end
                     end
                 end
 
                 return old(self, ...)
             end)
+
+            spellSpoofSection:Toggle{
+                Text = "Spoof Lightning Flash",
+                Callback = function(v)
+                    spoofedSpells['Lightning Flash'].Enabled = v
+                end
+            }
+            
+            spellSpoofSection:Toggle{
+                Text = "Spoof Lightning Barrage",
+                Callback = function(v)
+                    spoofedSpells['Lightning Barrage'].Enabled = v
+                end
+            }
         end
 
         buildSpellSpoofSection()
