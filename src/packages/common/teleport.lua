@@ -39,7 +39,7 @@ return {
         if mouse.Target ~= nil then
             local hrp = getHRP()
             if hrp then
-                hrp.CFrame = CFrame.new(mousepos + Vector3.new(0, 4, 0))
+                hrp.Position = mousepos + Vector3.new(0, 4, 0)
             end
         end
     end,
@@ -52,7 +52,7 @@ return {
         shouldStickTo = not shouldStickTo
     end,
     
-    SetTargetPlayer = function(txt: string)
+    SetTargetPlayer = function(txt: string, labelComponent)
         local player
         for _, plr in ipairs(Players:GetPlayers()) do
             if plr == Players.LocalPlayer then continue end
@@ -61,7 +61,11 @@ return {
                 break
             end
         end
-
+        
+        labelComponent:Set{
+            Text = string.format("Current target: ", if player then player.Name else "None"),
+            Color = if player then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
+        }
         targetPlayer = player
     end
 }

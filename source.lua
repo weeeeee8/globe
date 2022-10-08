@@ -11,7 +11,13 @@ local Maid = importLib('lib/maid')
 env.import = importLib
 
 env.oh = {
-    Maid = Maid.new()
+    Maid = Maid.new(),
+    Constants = {
+        StateColors = {
+            Valid = Color3.fromRGB(41, 204, 106),
+            Invalid = Color3.fromRGB(243, 36, 36),
+        }
+    }
 }
 
 importLib('/constructGui')

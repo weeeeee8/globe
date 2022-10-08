@@ -1,3 +1,6 @@
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+
 local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
 
 local FlyAPI = import('packages/common/fly')
@@ -38,6 +41,11 @@ return {
                 Text = "Teleport Options"
             }
 
+            local label = teleportSection:Label{
+                Text = "Current target: None",
+                Color = oh.Constants.StateColors.Invalid
+            }
+
             teleportSection:Keybind{
                 Text = "Toggle Mouse Teleport",
                 Default = Enum.KeyCode.T,
@@ -59,12 +67,28 @@ return {
             teleportSection:Input{
                 Text = "Target player",
                 Placeholder = "Player display name / Player name",
-                Callback = TeleportAPI.SetTargetPlayer
+                Callback = function(v)
+                    TeleportAPI.SetTargetPlayer(v, label)
+                end
+            }
+        end
+
+        local function buildRejoiningSection()
+            local rejoinSection = tab:Section{
+                Text = "Rejoining Options"
+            }
+
+            rejoinSection:Button{
+                Text = "Rejoin Place",
+                Callback = function()
+                    TeleportService:Teleport(game.PlaceId, Players.LocalPlayer)
+                end
             }
         end
 
         buildFlySection()
         buildTeleportSection()
+        buildRejoiningSection()
         tab:Select()
     end
 }
