@@ -73,7 +73,7 @@ return {
                                 fakeArgs[3].Origin = if mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
                             elseif SpellName == "Incinerating Burst" then
                                 fakeArgs[3] = if mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3]
-                            elseif SpellName == "Incinerating Burst" then
+                            elseif SpellName == "Asteroid Belt" then
                                 local x = {}
                                 local ocf = realArgs[3][1]
                                 local hrp = getHRP()
