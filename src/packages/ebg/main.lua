@@ -130,15 +130,17 @@ return {
                                     targetPos = floatPosition
                                 end
 
+                                rhrp.CFrame = ohrp.CFrame
+                                task.wait()
                                 local args = {[1] = "Chaos", [2] = "Disorder Ignition"}
                                 docmagic:FireServer(unpack(args))
-                                args[3] = {
-                                    ['nearestHRP'] = ohrp,
+                                local args = {[1] = "Chaos", [2] = "Disorder Ignition", [3] = {
+                                    ['nearestHRP'] = ohrp.Parent.Head,
                                     ['nearestPlayer'] = targetPlayer,
                                     ['rpos'] = ohrp.Position,
                                     ['norm'] = Vector3.yAxis,
                                     ['rhit'] = workspace.Map.Part
-                                }
+                                }}
                                 domagic:InvokeServer(unpack(args))
                                 reservekey:FireServer(Enum.KeyCode.Y)
 								if not rhrp:FindFirstChild("ChaosLink") then return end
