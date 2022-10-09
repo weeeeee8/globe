@@ -23,6 +23,10 @@ local function deepCopy(original)
     return copy
 end
 
+local function getHRP()
+    return Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+end
+
 return {
     init = function(windw)
         local tab = windw:Tab{Text = "EBG-Exploits"}
@@ -37,7 +41,7 @@ return {
                 ['Refraction'] = false,
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
-            
+
             local old; old = hookmetamethod(game, '__namecall', function(self, ...)
                 if not checkcaller() then
                     if getnamecallmethod() == "InvokeServer" and self == remote then
@@ -80,6 +84,108 @@ return {
             end
         end
 
+        local function buildDisorderIgnitionSection()
+            local docmagic = ReplicatedStorage:WaitForChild("Remotes").DoClientMagic
+            local domagic = ReplicatedStorage:WaitForChild("Remotes").DoMagic
+            local reservekey = ReplicatedStorage:WaitForChild("Remotes").KeyReserve
+
+            local targetPlayer = nil
+            local voidPosition = Vector3.new(0, workspace.FallenPartsDestroyHeight + 3, 0)
+            local floatPosition = Vector3.one * 2147483646
+            local trolltype = "void"
+            local spawnlocationsbyPlaceId = {
+                [2569625809]  = Vector3.new(-1100.52, 65.125, 282.28),
+                [570158081] = Vector3.new(-1907.776, 126.015, -414.179),
+                [537600204] = Vector3.new(1282.834, -83.49, -758.368),
+            }
+
+            local section = tab:Section{
+                Text = "Disorder Ignition Troll"
+            }
+
+            local labelComponent = section:Label{
+                Text = "Current target: None",
+                Color = oh.Constants.StateColors.Invalid
+            }
+
+
+            -- going to make a stack here in the future, so that itll be more efficient
+            section:Keybind{
+                Text = "Simulate troll",
+                Default = Enum.KeyCode.X,
+                Callback = function()
+                    if targetPlayer then
+						local targetCharacter = targetPlayer.Character
+						if targetCharacter then
+							if targetCharacter:FindFirstChildOfClass("ForceField") then return end
+
+                            local ohum, ohrp, rhrp = targetCharacter:FindFirstChild("Humanoid"), targetCharacter:FindFirstChild("HumanoidRootPart"), getHRP()
+                            if ohum and ohrp and rhrp then
+                                local targetPos = Vector3.zero
+                                if trolltype == "void" then
+                                    targetPos = voidPosition
+                                elseif trolltype == "spawn" then
+                                    targetPos = spawnlocationsbyPlaceId[game.PlaceId]
+                                elseif trolltype == "float" then
+                                    targetPos = floatPosition
+                                end
+
+                                local args = {[1] = "Chaos", [2] = "Disorder Ignition"}
+                                docmagic:FireServer(unpack(args))
+                                args[3] = {
+                                    ['nearestHRP'] = ohrp,
+                                    ['nearestPlayer'] = targetPlayer,
+                                    ['rpos'] = ohrp.Position,
+                                    ['norm'] = Vector3.yAxis,
+                                    ['rhit'] = workspace.Map.Part
+                                }
+                                domagic:InvokeServer(unpack(args))
+                                reservekey:FireServer(Enum.KeyCode.Y)
+								if not rhrp:FindFirstChild("ChaosLink") then return end
+								if ohum.Health <= 0 then return end
+                                local _s = tick()
+                                while tick()-_s < 3 do task.wait() end
+                                rhrp.CFrame = CFrame.new(targetPos)
+                                task.wait(0.125)
+                                reservekey:FireServer(Enum.KeyCode.Y)
+                            end
+                        end
+                    end
+                end
+            }
+
+            section:Input{
+                Text = "Set Troll Type",
+                Placeholder = "Troll type(?)",
+                Tooltip = "Float / Void / Spawn",
+                Callback = function(txt)
+                    trolltype = txt:lower()
+                end
+            }
+
+            section:Input{
+                Text = "Set Target Player",
+                Placeholder = "Player DisplayName / Name",
+                Callback = function()
+                    local player
+                    for _, plr in ipairs(Players:GetPlayers()) do
+                        if plr == Players.LocalPlayer then continue end
+                        if plr.DisplayName:find(txt, 1) or plr.Name:find(txt, 1) then
+                            player = plr
+                            break
+                        end
+                    end
+                    
+                    labelComponent:Set{
+                        Text = "Current target: " .. if player ~= nil then tostring(player.Name) else "None",
+                        Color = if player ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
+                    }
+                    targetPlayer = player
+                end
+            }
+        end
+
         buildSpellSpoofSection()
+        buildDisorderIgnitionSection()
     end
 }
