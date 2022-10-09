@@ -166,7 +166,7 @@ return {
             section:Input{
                 Text = "Set Target Player",
                 Placeholder = "Player DisplayName / Name",
-                Callback = function()
+                Callback = function(txt)
                     local player
                     for _, plr in ipairs(Players:GetPlayers()) do
                         if plr == Players.LocalPlayer then continue end
