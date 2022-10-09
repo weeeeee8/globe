@@ -143,10 +143,10 @@ return {
                                 }}
                                 domagic:InvokeServer(unpack(args))
                                 reservekey:FireServer(Enum.KeyCode.Y)
-								if not rhrp:FindFirstChild("ChaosLink") then return end
-								if ohum.Health <= 0 then return end
                                 local _s = tick()
                                 while tick()-_s < 3 do task.wait() end
+								if not rhrp:FindFirstChild("ChaosLink") then return end
+								if ohum.Health <= 0 then return end
                                 rhrp.CFrame = CFrame.new(targetPos)
                                 task.wait(0.125)
                                 reservekey:FireServer(Enum.KeyCode.Y)
