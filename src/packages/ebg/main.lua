@@ -130,8 +130,12 @@ return {
                                     targetPos = floatPosition
                                 end
 
-                                rhrp.CFrame = ohrp.CFrame
-                                task.wait(0.2)
+                                local pos = ohrp.Position
+								if ohrp.AssemblyLinearVelocity.Magnitude > 0 then
+									pos = pos + (ohrp.AssemblyLinearVelocity.Unit * 5.1)
+								end
+                                rhrp.CFrame = CFrame.new(pos)
+                                task.wait(0.07)
                                 local args = {[1] = "Chaos", [2] = "Disorder Ignition"}
                                 docmagic:FireServer(unpack(args))
                                 local args = {[1] = "Chaos", [2] = "Disorder Ignition", [3] = {
@@ -148,7 +152,7 @@ return {
 								if not rhrp:FindFirstChild("ChaosLink") then return end
 								if ohum.Health <= 0 then return end
                                 rhrp.CFrame = CFrame.new(targetPos)
-                                task.wait(0.125)
+                                task.wait(0.1)
                                 reservekey:FireServer(Enum.KeyCode.Y)
                             end
                         end
