@@ -131,7 +131,7 @@ return {
                                 end
 
                                 rhrp.CFrame = ohrp.CFrame
-                                task.wait(0.1)
+                                task.wait(0.2)
                                 local args = {[1] = "Chaos", [2] = "Disorder Ignition"}
                                 docmagic:FireServer(unpack(args))
                                 local args = {[1] = "Chaos", [2] = "Disorder Ignition", [3] = {
