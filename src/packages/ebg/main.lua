@@ -135,7 +135,7 @@ return {
 									pos = pos + (ohrp.AssemblyLinearVelocity.Unit * 5.1)
 								end
                                 rhrp.CFrame = CFrame.new(pos)
-                                task.wait(0.115)
+                                task.wait(0.175)
                                 local args = {[1] = "Chaos", [2] = "Disorder Ignition"}
                                 docmagic:FireServer(unpack(args))
                                 local args = {[1] = "Chaos", [2] = "Disorder Ignition", [3] = {
