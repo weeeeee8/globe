@@ -296,11 +296,11 @@ topbar.InputChanged:Connect(function(input)
     end
 end)
 
-UserInputService.InputChanged:Connect(function(input)
+oh.Maid:GiveTask(UserInputService.InputChanged:Connect(function(input)
     if input == dragInput and dragging then
         update(input)
     end
-end)
+end))
 
 
 local uICorner1 = Instance.new("UICorner")
@@ -939,13 +939,13 @@ keybindButton.MouseButton1Click:Connect(function()
     end)
 end)
 
-UserInputService.InputBegan:Connect(function(Key, gameProcessed)
+oh.Maid:GiveTask(UserInputService.InputBegan:Connect(function(Key, gameProcessed)
     if not Changing and Key.KeyCode == PressKey and not gameProcessed then
         task.spawn(function()
             pcall(Info.Callback)
         end)
     end
-end)
+end))
 
 end
 
