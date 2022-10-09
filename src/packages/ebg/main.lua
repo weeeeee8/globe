@@ -64,7 +64,7 @@ return {
                             elseif SpellName == "Splitting Slime" or SpellName == "Illusive Atake" then
                                 fakeArgs[3] = if mouse.Target then mouse.Hit else realArgs[3]
                             elseif SpellName == "Blaze Column" then
-                                fakeArgs[3] = (realArgs[3]) * CFrame.Angles(math.pi / 2, math.pi / 2, 0)
+                                fakeArgs[3] = realArgs[3] * CFrame.Angles(math.pi / 2, math.pi / 2, 0)
                             end
                             return old(self, unpack(fakeArgs))
                         end
@@ -135,7 +135,7 @@ return {
 									pos = pos + (ohrp.AssemblyLinearVelocity.Unit * 5.1)
 								end
                                 rhrp.CFrame = CFrame.new(pos)
-                                task.wait(0.07)
+                                task.wait(0.115)
                                 local args = {[1] = "Chaos", [2] = "Disorder Ignition"}
                                 docmagic:FireServer(unpack(args))
                                 local args = {[1] = "Chaos", [2] = "Disorder Ignition", [3] = {
