@@ -39,6 +39,7 @@ return {
                 ['Illusive Atake'] = false,
                 ['Blaze Column'] = false,
                 ['Refraction'] = false,
+                ['Water Beam'] = false,
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
@@ -65,6 +66,9 @@ return {
                                 fakeArgs[3] = if mouse.Target then mouse.Hit else realArgs[3]
                             elseif SpellName == "Blaze Column" then
                                 fakeArgs[3] = realArgs[3] * CFrame.Angles(math.pi / 2, math.pi / 2, 0)
+                            elseif SpellName == "Water Beam" then
+                                fakeArgs[3] = {}
+                                fakeArgs[3].Origin = if mouse.Target then CFrame.new(mouse.Hit.Position + Vector3.new(0, 2, 0)) else realArgs[3].Origin
                             end
                             return old(self, unpack(fakeArgs))
                         end
