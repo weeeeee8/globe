@@ -40,6 +40,8 @@ return {
                 ['Blaze Column'] = false,
                 ['Refraction'] = false,
                 ['Water Beam'] = false,
+                ['Incinerating Burst'] = false,
+                ['Asteroid Belt'] = false,
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
@@ -65,10 +67,20 @@ return {
                             elseif SpellName == "Splitting Slime" or SpellName == "Illusive Atake" then
                                 fakeArgs[3] = if mouse.Target then mouse.Hit else realArgs[3]
                             elseif SpellName == "Blaze Column" then
-                                fakeArgs[3] = realArgs[3] * CFrame.Angles(math.pi / 2, math.pi / 2, 0)
+                                fakeArgs[3] = if mouse.Target then mouse.Hit * CFrame.new(0, 2, 0) * CFrame.Angles(math.pi / 2, math.pi / 2, 0) else realArgs[3]
                             elseif SpellName == "Water Beam" then
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Origin = if mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
+                            elseif SpellName == "Incinerating Burst" then
+                                fakeArgs[3] = if mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3]
+                            elseif SpellName == "Incinerating Burst" then
+                                local x = {}
+                                local ocf = realArgs[3][1]
+                                local hrp = getHRP()
+                                for i = 1, 50 do
+                                    table.insert(x, if hrp then CFrame.new(hrp.Position + Vector3.new(0, 8, 0)) else ocf)
+                                end
+                                fakeArgs[3] = x
                             end
                             return old(self, unpack(fakeArgs))
                         end
