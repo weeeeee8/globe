@@ -54,7 +54,7 @@ return {
                 if not checkcaller() then
                     if getnamecallmethod() == "InvokeServer" and self == remote then
                         local realArgs = {...}
-                        local SpellName = realArgs[2]
+                        local SpellName = tostring(realArgs[2])
                         local foundSpoofedData = spoofedSpells[SpellName]
                         if foundSpoofedData then
                             local hrp
@@ -65,6 +65,8 @@ return {
                                 end
                             end
 
+                            print(SpellName, hrp)
+                            print(unpack(realArgs))
                             local fakeArgs = {unpack(realArgs)}
                             if SpellName == "Lightning Flash" then
                                 fakeArgs[3] = {}
