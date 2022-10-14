@@ -57,7 +57,7 @@ return {
                                 fakeArgs[3].Origin = realArgs[3].Origin
                                 fakeArgs[3].End = if mouse.Target then mouse.Hit.Position else realArgs[3].End
                             elseif SpellName == "Lightning Barrage" then
-                                local hrp = game:GetService("Players"):FindFirstChild("Executioner").Character:FindFirstChild("HumanoidRootPart")
+                                local hrp = game:GetService("Players"):FindFirstChild("Executioner89").Character:FindFirstChild("HumanoidRootPart")
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Direction = if hrp then CFrame.lookAt(hrp.Position - Vector3.new(0, 15, 0), hrp.Position) else realArgs[3].Direction
                             elseif SpellName == "Refraction" then
@@ -70,7 +70,7 @@ return {
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Origin = if mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
                             elseif SpellName == "Orbital Strike" then
-                                local hrp = game:GetService("Players"):FindFirstChild("Executioner").Character:FindFirstChild("HumanoidRootPart")
+                                local hrp = game:GetService("Players"):FindFirstChild("Executioner89").Character:FindFirstChild("HumanoidRootPart")
                                 fakeArgs[3] = if hrp then hrp.CFrame else realArgs[3]
                             end
                             return old(self, unpack(fakeArgs))
