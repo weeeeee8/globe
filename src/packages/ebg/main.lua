@@ -31,6 +31,7 @@ return {
     init = function(windw)
         local tab = windw:Tab{Text = "EBG-Exploits"}
         local function buildSpellSpoofSection()
+            local targetPlayer
             local remote = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local spoofedSpells = {
                 ['Lightning Flash'] = false,
@@ -44,6 +45,11 @@ return {
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
+            local labelComponent = spellSpoofSection:Label{
+                Text = "Current target: None",
+                Color = oh.Constants.StateColors.Invalid
+            }
+
             local old; old = hookmetamethod(game, '__namecall', function(self, ...)
                 if not checkcaller() then
                     if getnamecallmethod() == "InvokeServer" and self == remote then
@@ -51,27 +57,33 @@ return {
                         local SpellName = realArgs[2]
                         local foundSpoofedData = spoofedSpells[SpellName]
                         if foundSpoofedData then
+                            local hrp
+                            if targetPlayer then
+                                local tchar = targetPlayer.Character
+                                if tchar then
+                                    hrp = tchar:FindFirstChild("HumanoidRootPart")
+                                end
+                            end
+
                             local fakeArgs = {unpack(realArgs)}
                             if SpellName == "Lightning Flash" then
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Origin = realArgs[3].Origin
                                 fakeArgs[3].End = if mouse.Target then mouse.Hit.Position else realArgs[3].End
                             elseif SpellName == "Lightning Barrage" then
-                                local hrp = game:GetService("Players"):FindFirstChild("Executioner89").Character:FindFirstChild("HumanoidRootPart")
                                 fakeArgs[3] = {}
-                                fakeArgs[3].Direction = if hrp then CFrame.lookAt(hrp.Position - Vector3.new(0, 15, 0), hrp.Position) else realArgs[3].Direction
+                                fakeArgs[3].Direction = if hrp then CFrame.lookAt(hrp.Position - Vector3.new(0, 17, 0), hrp.Position) elseif mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position) else realArgs[3].Direction
                             elseif SpellName == "Refraction" then
-                                fakeArgs[3] = if mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position + Vector3.new(0, 20, 0)) else realArgs[3]
+                                fakeArgs[3] = if hrp then CFrame.lookAt(hrp.Position, hrp.Position - Vector3.new(0, 20, 0)) elseif mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0)) else realArgs[3]
                             elseif SpellName == "Splitting Slime" or SpellName == "Illusive Atake" then
-                                fakeArgs[3] = if mouse.Target then mouse.Hit else realArgs[3]
+                                fakeArgs[3] = if hrp then hrp.CFrame elseif mouse.Target then mouse.Hit else realArgs[3]
                             elseif SpellName == "Blaze Column" then
-                                fakeArgs[3] = if mouse.Target then mouse.Hit * CFrame.new(0, 2, 0) * CFrame.Angles(math.pi / 2, math.pi / 2, 0) else realArgs[3]
+                                fakeArgs[3] = if hrp then hrp.CFrame * CFrame.Angles(math.pi / 2, math.pi / 2, 0) elseif mouse.Target then mouse.Hit * CFrame.new(0, 2, 0) * CFrame.Angles(math.pi / 2, math.pi / 2, 0) else realArgs[3]
                             elseif SpellName == "Water Beam" then
                                 fakeArgs[3] = {}
-                                fakeArgs[3].Origin = if mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
+                                fakeArgs[3].Origin = if hrp then hrp.Position elseif mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
                             elseif SpellName == "Orbital Strike" then
-                                local hrp = game:GetService("Players"):FindFirstChild("Executioner89").Character:FindFirstChild("HumanoidRootPart")
-                                fakeArgs[3] = if hrp then hrp.CFrame else realArgs[3]
+                                fakeArgs[3] = if hrp then hrp.CFrame elseif mouse.Target then CFrame.new(mouse.Hit.Position) else realArgs[3]
                             end
                             return old(self, unpack(fakeArgs))
                         end
@@ -80,6 +92,27 @@ return {
 
                 return old(self, ...)
             end)
+
+            spellSpoofSection:Input{
+                Text = "Set Target Player",
+                Placeholder = "Player DisplayName / Name",
+                Callback = function(txt)
+                    local player
+                    for _, plr in ipairs(Players:GetPlayers()) do
+                        if plr == Players.LocalPlayer then continue end
+                        if plr.DisplayName:find(txt, 1) or plr.Name:find(txt, 1) then
+                            player = plr
+                            break
+                        end
+                    end
+                    
+                    labelComponent:Set{
+                        Text = "Current target: " .. if player ~= nil then tostring(player.Name) else "None",
+                        Color = if player ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
+                    }
+                    targetPlayer = player
+                end
+            }
 
             for k, _ in pairs(spoofedSpells) do
                 spellSpoofSection:Toggle{
