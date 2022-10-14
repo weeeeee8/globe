@@ -40,8 +40,7 @@ return {
                 ['Blaze Column'] = false,
                 ['Refraction'] = false,
                 ['Water Beam'] = false,
-                ['Incinerating Burst'] = false,
-                ['Asteroid Belt'] = false,
+                ['Orbital Strike'] = false,
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
@@ -60,8 +59,9 @@ return {
                                 fakeArgs[3].Origin = realArgs[3].Origin
                                 fakeArgs[3].End = if mouse.Target then mouse.Hit.Position else realArgs[3].End
                             elseif SpellName == "Lightning Barrage" then
+                                local hrp = game:GetService("Players"):FindFirstChild("Mahairybella").Character:FindFirstChild("HumanoidRootPart")
                                 fakeArgs[3] = {}
-                                fakeArgs[3].Direction = if mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 15, 0), mouse.Hit.Position) else realArgs[3].Direction
+                                fakeArgs[3].Direction = if hrp then CFrame.lookAt(hrp.Position - Vector3.new(0, 15, 0), mouse.Hit.Position) else realArgs[3].Direction
                             elseif SpellName == "Refraction" then
                                 fakeArgs[3] = if mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position + Vector3.new(0, 20, 0)) else realArgs[3]
                             elseif SpellName == "Splitting Slime" or SpellName == "Illusive Atake" then
@@ -71,16 +71,9 @@ return {
                             elseif SpellName == "Water Beam" then
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Origin = if mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
-                            elseif SpellName == "Incinerating Burst" then
-                                fakeArgs[3] = if mouse.Target then CFrame.new(mouse.Hit.Position + Vector3.new(0, 7, 0)) else realArgs[3]
-                            elseif SpellName == "Asteroid Belt" then
-                                local x = {}
-                                local ocf = realArgs[3][1]
-                                local hrp = getHRP()
-                                for i = 1, 50 do
-                                    x[i] = if hrp then CFrame.new(hrp.Position + Vector3.new(0, 8, 0)) else ocf
-                                end
-                                fakeArgs[3] = x
+                            elseif SpellName == "Orbital Strike" then
+                                local hrp = game:GetService("Players"):FindFirstChild("Mahairybella").Character:FindFirstChild("HumanoidRootPart")
+                                fakeArgs[3] = if hrp then hrp.CFrame else realArgs[3]
                             end
                             return old(self, unpack(fakeArgs))
                         end
