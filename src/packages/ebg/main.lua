@@ -72,18 +72,66 @@ return {
                                 fakeArgs[3].End = if mouse.Target then mouse.Hit.Position else realArgs[3].End
                             elseif SpellName == "Lightning Barrage" then
                                 fakeArgs[3] = {}
-                                fakeArgs[3].Direction = if hrp then CFrame.lookAt(hrp.Position - Vector3.new(0, 17, 0), hrp.Position) elseif mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position) else realArgs[3].Direction
+                                local arg
+                                if hrp ~= nil then
+                                    arg = CFrame.lookAt(hrp.Position - Vector3.new(0, 17, 0), hrp.Position)
+                                elseif mouse.Target then
+                                    arg = CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position)
+                                else
+                                    arg = realArgs[3]
+                                end
+                                fakeArgs[3].Direction = arg
                             elseif SpellName == "Refraction" then
-                                fakeArgs[3] = if hrp then CFrame.lookAt(hrp.Position, hrp.Position - Vector3.new(0, 20, 0)) elseif mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0)) else realArgs[3]
+                                local arg
+                                if hrp ~= nil then
+                                    arg = CFrame.lookAt(hrp.Position, hrp.Position - Vector3.new(0, 20, 0))
+                                elseif mouse.Target then
+                                    arg = CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0))
+                                else
+                                    arg = realArgs[3]
+                                end
+                                fakeArgs[3] = arg
                             elseif SpellName == "Splitting Slime" or SpellName == "Illusive Atake" then
-                                fakeArgs[3] = if hrp then hrp.CFrame elseif mouse.Target then mouse.Hit else realArgs[3]
+                                local arg
+                                if hrp ~= nil then
+                                    arg = hrp.CFrame
+                                elseif mouse.Target then
+                                    arg = mouse.Hit
+                                else
+                                    arg = realArgs[3]
+                                end
+                                fakeArgs[3] = arg
                             elseif SpellName == "Blaze Column" then
-                                fakeArgs[3] = if hrp then hrp.CFrame * CFrame.Angles(math.pi / 2, math.pi / 2, 0) elseif mouse.Target then mouse.Hit * CFrame.new(0, 2, 0) * CFrame.Angles(math.pi / 2, math.pi / 2, 0) else realArgs[3]
+                                local arg
+                                if hrp ~= nil then
+                                    arg = hrp.CFrame * CFrame.Angles(math.pi / 2, math.pi / 2, 0)
+                                elseif mouse.Target then
+                                    arg = mouse.Hit * CFrame.new(0, 2, 0) * CFrame.Angles(math.pi / 2, math.pi / 2, 0)
+                                else
+                                    arg = realArgs[3]
+                                end
+                                fakeArgs[3] = arg
                             elseif SpellName == "Water Beam" then
                                 fakeArgs[3] = {}
-                                fakeArgs[3].Origin = if hrp then hrp.Position elseif mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
+                                local arg
+                                if hrp ~= nil then
+                                    arg = hrp.Position
+                                elseif mouse.Target then
+                                    arg = mouse.Hit.Position + Vector3.new(0, 7, 0)
+                                else
+                                    arg = realArgs[3].Origin
+                                end
+                                fakeArgs[3].Origin = arg
                             elseif SpellName == "Orbital Strike" then
-                                fakeArgs[3] = if hrp then hrp.CFrame elseif mouse.Target then CFrame.new(mouse.Hit.Position) else realArgs[3]
+                                local arg
+                                if hrp ~= nil then
+                                    arg = hrp.CFrame
+                                elseif mouse.Target then
+                                    arg = mouse.Hit
+                                else
+                                    arg = realArgs[3]
+                                end
+                                fakeArgs[3] = arg
                             end
                             return old(self, unpack(fakeArgs))
                         end
