@@ -135,6 +135,7 @@ return {
                                 end
                                 fakeArgs[3] = arg
                             end
+                            print(unpack(fakeArgs))
                             return old(self, unpack(fakeArgs))
                         end
                     end
