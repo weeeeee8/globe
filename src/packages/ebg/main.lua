@@ -223,7 +223,7 @@ return {
 
                                 local pos = ohrp.Position
 								if ohrp.AssemblyLinearVelocity.Magnitude > 0 then
-									pos = pos + (ohrp.AssemblyLinearVelocity.Unit * 5.1)
+									pos = pos + (ohrp.AssemblyLinearVelocity.Unit * (ohum.WalkSpeed * 0.75))
 								end
                                 rhrp.CFrame = CFrame.new(pos)
                                 task.wait(0.175)
