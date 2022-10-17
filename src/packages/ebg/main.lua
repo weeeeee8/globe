@@ -138,7 +138,7 @@ return {
                     part.Anchored = true
                     part.CanCollide = false
                     part.CanQuery = false
-                    part.Transparency = 0.5
+                    part.Transparency = 0
                     part.Material = Enum.Material.Neon
 
                     part.Parent = pointsFolder
@@ -159,6 +159,7 @@ return {
                 local plrs = {}
                 for _,v in ipairs(Players:GetPlayers()) do
                     if ignorePlayers[v] then continue end
+                    if not v.Character then continue end    
                     local hum = v.Character:FindFirstChild("Humanoid")
                     if v.Character:FindFirstChildOfClass("ForceField") then continue end
                     if not hum or hum.Health <= 0 then continue end
@@ -176,6 +177,7 @@ return {
             end
 
             local _lastPlayer = nil
+            local dirty = false
 
             local section = tab:Section{
                 Text = "Autotargeting Options", Side = "Right",
@@ -210,8 +212,6 @@ return {
                             return
                         end
                     end
-
-                    cleanPoints()
                 end
             }
             
@@ -256,6 +256,7 @@ return {
                 end
                 
                 if targetChar then
+                    dirty = true
                     local plr = Players:GetPlayerFromCharacter(targetChar)
                     if _lastPlayer ~= plr then
                         _lastPlayer = plr
@@ -263,11 +264,6 @@ return {
                         playerLabel:Set{
                             Text = "Current locked target: " .. if plr ~= nil then tostring(plr.Name) else "None",
                             Color = if plr ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
-                        }
-                    else
-                        playerLabel:Set{
-                            Text = "Current locked target: None",
-                            Color = oh.Constants.StateColors.Invalid
                         }
                     end
 
@@ -297,6 +293,15 @@ return {
                         end
         
                         data.lastVelocity = velocity
+                    end
+                else
+                    if dirty then
+                        dirty = false
+                        cleanPoints()
+                        playerLabel:Set{
+                            Text = "Current locked target: None",
+                            Color = oh.Constants.StateColors.Invalid
+                        }
                     end
                 end
         
