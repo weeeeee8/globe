@@ -142,7 +142,7 @@ return {
                     part.Material = Enum.Material.Neon
 
                     part.Parent = pointsFolder
-                    point[index] = part
+                    points[index] = part
                     return part
                 end
                 point.BrickColor = if index == i then BrickColor.Green() else BrickColor.Red()
