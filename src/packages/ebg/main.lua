@@ -81,7 +81,7 @@ return {
                                 fakeArgs[3].End = if mouse.Target then realMouseCFrame else realArgs[3].End
                             elseif SpellName == "Lightning Barrage" then
                                 fakeArgs[3] = {}
-                                fakeArgs[3].Direction = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position) else realArgs[3].Direction
+                                fakeArgs[3].End = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position) else realArgs[3].Direction
                             elseif SpellName == "Refraction" then
                                 fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 20, 0), mouse.Hit.Position) else realArgs[3]
                             elseif SpellName == "Splitting Slime" or SpellName == "Illusive Atake" then
