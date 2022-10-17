@@ -131,7 +131,7 @@ return {
             local function newPoint(index, i)
                 local point = points[index]
                 if not point then
-                    local part = Instance
+                    local part = Instance.new("Part")
                     part.Size = Vector3.one
                     part.Shape = Enum.PartType.Ball
 
@@ -141,7 +141,7 @@ return {
                     part.Transparency = 0.5
                     part.Material = Enum.Material.Neon
 
-                    part.Parent = workspace.Points
+                    part.Parent = pointsFolder
                     point[index] = part
                     return part
                 end
