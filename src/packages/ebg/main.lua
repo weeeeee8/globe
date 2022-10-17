@@ -281,7 +281,7 @@ return {
                     if foundForceFied then return end
                     local hrp = targetChar:FindFirstChild("HumanoidRootPart")
                     if hrp then
-                        local data = players[targetPlayer]
+                        local data = players[plr]
         
                         local velocity = hrp.AssemblyLinearVelocity
                         local accel = (velocity-data.lastVelocity) / dt
