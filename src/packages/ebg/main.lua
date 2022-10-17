@@ -285,7 +285,12 @@ return {
                         for i = 1, NUMS_OF_PREDICTIONS do
                             local Point: Part = newPoint(i, PREDICTION_INDEX)
                             local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
-                            local p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
+                            local p
+                            if hrp:FindFirstChildOfClass("BodyPosition") then
+                                p = hrp.Position
+                            else
+                                p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
+                            end
                             Point.Position = p
                             if i == PREDICTION_INDEX then
                                 pos = p
