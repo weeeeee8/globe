@@ -157,7 +157,7 @@ return {
 
             local function getNearestPlayerFromPosition(position)
                 local plrs = {}
-                for _,v in ipairs(game.Players:GetPlayers()) do
+                for _,v in ipairs(Players:GetPlayers()) do
                     if ignorePlayers[v] then continue end
                     local hum = v.Character:FindFirstChild("Humanoid")
                     if v.Character:FindFirstChildOfClass("ForceField") then continue end
@@ -175,63 +175,7 @@ return {
                 return if plrs[1] then plrs[1].plr else nil
             end
 
-            oh.Maid:GiveTask(RunService.Stepped:Connect(function(_, dt)
-                local pos = Vector3.zero
-                local targetChar
-                if targetOption == "locked" then
-                    if targetPlayer then
-                        targetChar = targetPlayer.Character
-                    end
-                elseif targetOption == "mouse" then
-                    local foundPlayer = getNearestPlayerFromPosition(mouse.Hit.Position)
-                    if foundPlayer then
-                        targetChar = foundPlayer.Character
-                    end
-                elseif targetOption == "character" then
-                    local rhrp = getHRP()
-                    if rhrp then
-                        local foundPlayer = getNearestPlayerFromPosition(rhrp.Position)
-                        if foundPlayer then
-                            targetChar = foundPlayer.Character
-                        end
-                    end
-                end
-
-                if targetChar then
-                    local foundForceFied = targetChar:FindFirstChildOfClass("ForceField")
-                    if foundForceFied then return end
-                    local hrp = targetChar:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local data = players[targetPlayer]
-        
-                        local velocity = hrp.AssemblyLinearVelocity
-                        local accel = (velocity-data.lastVelocity) / dt
-        
-                        for i = 1, NUMS_OF_PREDICTIONS do
-                            local Point: Part = newPoint(i, PREDICTION_INDEX)
-                            local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
-                            local p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
-                            Point.Position = p
-                            if i == PREDICTION_INDEX then
-                                pos = p
-                            end
-                        end
-        
-                        data.lastVelocity = velocity
-                    end
-                end
-        
-                overrideMouseCFrame = CFrame.new(pos)
-                if enabled == true then
-                    if pos ~= Vector3.zero then
-                        isMouseOverriden = true
-                    else
-                        isMouseOverriden = false
-                    end
-                else
-                    isMouseOverriden = false
-                end
-            end))
+            local _lastPlayer = nil
 
             local section = tab:Section{
                 Text = "Autotargeting Options", Side = "Right",
@@ -284,18 +228,89 @@ return {
                         end
                     end
                     
-                    playerLabel:Set{
-                        Text = "Current locked target: " .. if player ~= nil then tostring(player.Name) else "None",
-                        Color = if player ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
-                    }
                     targetPlayer = player
-                    if not players[player] then
-                        players[player] = {
+                end
+            }
+
+            
+            oh.Maid:GiveTask(RunService.Stepped:Connect(function(_, dt)
+                local pos = Vector3.zero
+                local targetChar
+                if targetOption == "locked" then
+                    if targetPlayer then
+                        targetChar = targetPlayer.Character
+                    end
+                elseif targetOption == "mouse" then
+                    local foundPlayer = getNearestPlayerFromPosition(mouse.Hit.Position)
+                    if foundPlayer then
+                        targetChar = foundPlayer.Character
+                    end
+                elseif targetOption == "character" then
+                    local rhrp = getHRP()
+                    if rhrp then
+                        local foundPlayer = getNearestPlayerFromPosition(rhrp.Position)
+                        if foundPlayer then
+                            targetChar = foundPlayer.Character
+                        end
+                    end
+                end
+                
+                if targetChar then
+                    local plr = Players:GetPlayerFromCharacter(targetChar)
+                    if _lastPlayer ~= plr then
+                        _lastPlayer = plr
+
+                        playerLabel:Set{
+                            Text = "Current locked target: " .. if plr ~= nil then tostring(plr.Name) else "None",
+                            Color = if plr ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
+                        }
+                    else
+                        playerLabel:Set{
+                            Text = "Current locked target: None",
+                            Color = oh.Constants.StateColors.Invalid
+                        }
+                    end
+
+                    if not players[plr] then
+                        players[plr] = {
                             lastVelocity = Vector3.zero
                         }
                     end
+
+                    local foundForceFied = targetChar:FindFirstChildOfClass("ForceField")
+                    if foundForceFied then return end
+                    local hrp = targetChar:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        local data = players[targetPlayer]
+        
+                        local velocity = hrp.AssemblyLinearVelocity
+                        local accel = (velocity-data.lastVelocity) / dt
+        
+                        for i = 1, NUMS_OF_PREDICTIONS do
+                            local Point: Part = newPoint(i, PREDICTION_INDEX)
+                            local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
+                            local p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
+                            Point.Position = p
+                            if i == PREDICTION_INDEX then
+                                pos = p
+                            end
+                        end
+        
+                        data.lastVelocity = velocity
+                    end
                 end
-            }
+        
+                overrideMouseCFrame = CFrame.new(pos)
+                if enabled == true then
+                    if pos ~= Vector3.zero then
+                        isMouseOverriden = true
+                    else
+                        isMouseOverriden = false
+                    end
+                else
+                    isMouseOverriden = false
+                end
+            end))
         end
 
         local function buildDisorderIgnitionSection()
