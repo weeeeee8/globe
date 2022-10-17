@@ -113,7 +113,7 @@ return {
         end
 
         local function buildAutotargetSection()
-            local NUMS_OF_PREDICTIONS = 8
+            local NUMS_OF_PREDICTIONS = 10
             local FIXED_TIME_SCALE = 1
             local PREDICTION_INDEX = 5
 
@@ -146,6 +146,7 @@ return {
                     return part
                 end
                 point.BrickColor = if index == i then BrickColor.Green() else BrickColor.Red()
+                point.Size = if index == i then Vector3.one * 3 else Vector3.one
                 return point
             end
 
@@ -196,6 +197,17 @@ return {
                 Text = "Toggle autotarget",
                 Callback = function(toggled)
                     enabled = toggled
+                end
+            }
+
+            section:Input{
+                Text = "Set Prediction Index",
+                Placeholder = "Prediction Index",
+                Callback = function(txt)
+                    local num = tonumber(txt)
+                    if not num then num = 3 end
+                    num = math.clamp(num, 1, NUMS_OF_PREDICTIONS)
+                    PREDICTION_INDEX = num
                 end
             }
 
