@@ -24,6 +24,25 @@ end
 
 return {
     Start = function()
+        oh.Maid:GiveTask(function()
+            toggled = false
+            shouldNoClip = false
+            if velocityObject then
+                velocityObject:Destroy()
+                velocityObject = nil
+            end
+
+            if gyroObject then
+                gyroObject:Destroy()
+                gyroObject = nil
+            end
+
+            local hum = getHum()
+            if hum then
+                hum.AutoRotate = true
+            end
+        end)
+
         oh.Maid:GiveTask(RunService.RenderStepped:Connect(function(deltaTime)
             if toggled then
                 local f = Vector3.zero

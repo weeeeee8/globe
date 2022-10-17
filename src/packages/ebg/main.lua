@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
 
 local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
@@ -29,9 +30,27 @@ end
 
 return {
     init = function(windw)
+        local realMouseCFrame = mouse.Hit
+        local overrideMouseCFrame = CFrame.new()
+        local isMouseOverriden = false
+        local oldMouse; oldMouse = hookmetamethod(mouse, '__index', function(self, key)
+            if not checkcaller() then
+                local mouseCFrame = oldMouse(self, key)
+                realMouseCFrame = mouseCFrame
+                if isMouseOverriden and key == "Hit" then
+                    return overrideMouseCFrame
+                end
+                return mouseCFrame
+            end
+            return oldMouse(self, key)
+        end)
+
+        oh.Maid:GiveTask(function()
+            isMouseOverriden = false
+        end)
+
         local tab = windw:Tab{Text = "EBG-Exploits"}
         local function buildSpellSpoofSection()
-            local targetPlayer
             local remote = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local spoofedSpells = {
                 ['Lightning Flash'] = false,
@@ -45,107 +64,212 @@ return {
             }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
-            local labelComponent = spellSpoofSection:Label{
-                Text = "Current target: None",
-                Color = oh.Constants.StateColors.Invalid
-            }
-
-            local old; old = hookmetamethod(game, '__namecall', function(self, ...)
+            local oldSpoof; oldSpoof = hookmetamethod(game, '__namecall', function(self, ...)
                 if not checkcaller() then
                     if getnamecallmethod() == "InvokeServer" and self == remote then
                         local realArgs = {...}
                         local SpellName = tostring(realArgs[2])
                         local foundSpoofedData = spoofedSpells[SpellName]
                         if foundSpoofedData then
-                            local hrp
-                            if targetPlayer then
-                                local tchar = targetPlayer.Character
-                                if tchar then
-                                    hrp = tchar:FindFirstChild("HumanoidRootPart")
-                                end
-                            end
-
-                            print(SpellName, hrp)
-                            print(unpack(realArgs))
                             local fakeArgs = {unpack(realArgs)}
                             if SpellName == "Lightning Flash" then
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Origin = realArgs[3].Origin
-                                fakeArgs[3].End = if mouse.Target then mouse.Hit.Position else realArgs[3].End
+                                fakeArgs[3].End = if mouse.Target then realMouseCFrame else realArgs[3].End
                             elseif SpellName == "Lightning Barrage" then
                                 fakeArgs[3] = {}
-                                local arg
-                                if hrp ~= nil then
-                                    arg = CFrame.lookAt(hrp.Position - Vector3.new(0, 17, 0), hrp.Position)
-                                elseif mouse.Target then
-                                    arg = CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position)
-                                else
-                                    arg = realArgs[3]
-                                end
-                                fakeArgs[3].Direction = arg
+                                fakeArgs[3].Direction = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position) else realArgs[3].Direction
                             elseif SpellName == "Refraction" then
-                                local arg
-                                if hrp ~= nil then
-                                    arg = CFrame.lookAt(hrp.Position, hrp.Position - Vector3.new(0, 20, 0))
-                                elseif mouse.Target then
-                                    arg = CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0))
-                                else
-                                    arg = realArgs[3]
-                                end
-                                fakeArgs[3] = arg
+                                fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 20, 0), mouse.Hit.Position) else realArgs[3]
                             elseif SpellName == "Splitting Slime" or SpellName == "Illusive Atake" then
-                                local arg
-                                if hrp ~= nil then
-                                    arg = hrp.CFrame
-                                elseif mouse.Target then
-                                    arg = mouse.Hit
-                                else
-                                    arg = realArgs[3]
-                                end
-                                fakeArgs[3] = arg
+                                fakeArgs[3] =  if isMouseOverriden or mouse.Target then CFrame.new(mouse.Hit.Position) else realArgs[3]
                             elseif SpellName == "Blaze Column" then
-                                local arg
-                                if hrp ~= nil then
-                                    arg = hrp.CFrame * CFrame.Angles(math.pi / 2, math.pi / 2, 0)
-                                elseif mouse.Target then
-                                    arg = mouse.Hit * CFrame.new(0, 2, 0) * CFrame.Angles(math.pi / 2, math.pi / 2, 0)
-                                else
-                                    arg = realArgs[3]
-                                end
-                                fakeArgs[3] = arg
+                                fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.new(mouse.Hit.Position) * CFrame.new(0, 2, 0) * CFrame.Angles(math.pi / 2, math.pi / 2, 0) else realArgs[3]
                             elseif SpellName == "Water Beam" then
                                 fakeArgs[3] = {}
-                                local arg
-                                if hrp ~= nil then
-                                    arg = hrp.Position
-                                elseif mouse.Target then
-                                    arg = mouse.Hit.Position + Vector3.new(0, 7, 0)
-                                else
-                                    arg = realArgs[3].Origin
-                                end
-                                fakeArgs[3].Origin = arg
+                                fakeArgs[3].Origin = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
                             elseif SpellName == "Orbital Strike" then
-                                local arg
-                                if hrp ~= nil then
-                                    arg = hrp.CFrame
-                                elseif mouse.Target then
-                                    arg = mouse.Hit
-                                else
-                                    arg = realArgs[3]
-                                end
-                                fakeArgs[3] = arg
+                                fakeArgs[3] = if isMouseOverriden or mouse.Target then mouse.Hit else realArgs[3]
                             end
-                            print(unpack(fakeArgs))
-                            return old(self, unpack(fakeArgs))
+                            return oldSpoof(self, unpack(fakeArgs))
                         end
                     end
                 end
 
-                return old(self, ...)
+                return oldSpoof(self, ...)
             end)
 
-            spellSpoofSection:Input{
-                Text = "Set Target Player",
+            for k, _ in pairs(spoofedSpells) do
+                spellSpoofSection:Toggle{
+                    Text = k,
+                    Callback = function(v)
+                        spoofedSpells[k] = v
+                    end
+                }
+            end
+        end
+
+        local function buildAutotargetSection()
+            local NUMS_OF_PREDICTIONS = 8
+            local FIXED_TIME_SCALE = 1
+            local PREDICTION_INDEX = 5
+
+            local pointsFolder = workspace:FindFirstChild(".points") or Instance.new("Folder", workspace)
+            pointsFolder.Parent = workspace
+
+            local targetPlayer
+            local enabled = false
+            local targetOption = "locked"
+            local autofill = {"character", "mouse", "locked"}
+            local players = {}
+            local ignorePlayers= {[Players.LocalPlayer] = true}
+            local points = {}
+
+            local function newPoint(index, i)
+                local point = points[index]
+                if not point then
+                    local part = Instance
+                    part.Size = Vector3.one
+                    part.Shape = Enum.PartType.Ball
+
+                    part.Anchored = true
+                    part.CanCollide = false
+                    part.CanQuery = false
+                    part.Transparency = 0.5
+                    part.Material = Enum.Material.Neon
+
+                    part.Parent = workspace.Points
+                    point[index] = part
+                    return part
+                end
+                point.BrickColor = if index == i then BrickColor.Green() else BrickColor.Red()
+                return point
+            end
+
+            local function cleanPoints()
+                for i = #points, 1, -1 do
+                    points[i].CFrame = CFrame.new(0, 10e8, 0)
+                end
+            end
+
+            local function getNearestPlayerFromPosition(position)
+                local plrs = {}
+                for _,v in ipairs(game.Players:GetPlayers()) do
+                    if ignorePlayers[v] then continue end
+                    local hum = v.Character:FindFirstChild("Humanoid")
+                    if v.Character:FindFirstChildOfClass("ForceField") then continue end
+                    if not hum or hum.Health <= 0 then continue end
+                    table.insert(plrs, {
+                        dist = v:DistanceFromCharacter(position),
+                        plr = v
+                    })
+                end
+        
+                table.sort(plrs, function(a, b)
+                    return a.dist < b.dist
+                end)
+        
+                return if plrs[1] then plrs[1].plr else nil
+            end
+
+            oh.Maid:GiveTask(RunService.Stepped:Connect(function(_, dt)
+                local pos = Vector3.zero
+                local targetChar
+                if targetOption == "locked" then
+                    if targetPlayer then
+                        targetChar = targetPlayer.Character
+                    end
+                elseif targetOption == "mouse" then
+                    local foundPlayer = getNearestPlayerFromPosition(Mouse.Hit.Position)
+                    if foundPlayer then
+                        targetChar = foundPlayer.Character
+                    end
+                elseif targetOption == "character" then
+                    local rhrp = getHRP()
+                    if rhrp then
+                        local foundPlayer = getNearestPlayerFromPosition(rhrp.Position)
+                        if foundPlayer then
+                            targetChar = foundPlayer.Character
+                        end
+                    end
+                end
+
+                if targetChar then
+                    local foundForceFied = targetChar:FindFirstChildOfClass("ForceField")
+                    if foundForceFied then return end
+                    local hrp = targetChar:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        local data = players[targetPlayer]
+        
+                        local velocity = hrp.AssemblyLinearVelocity
+                        local accel = (velocity-data.lastVelocity) / dt
+        
+                        for i = 1, NUMS_OF_PREDICTIONS do
+                            local Point: Part = newPoint(i, PREDICTION_INDEX)
+                            local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
+                            local p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
+                            Point.Position = p
+                            if i == PREDICTION_INDEX then
+                                pos = p
+                            end
+                        end
+        
+                        data.lastVelocity = velocity
+                    end
+                end
+        
+                overrideMouseCFrame = CFrame.new(pos)
+                if enabled == true then
+                    if pos ~= Vector3.zero then
+                        isMouseOverriden = true
+                    else
+                        isMouseOverriden = false
+                    end
+                else
+                    isMouseOverriden = false
+                end
+            end))
+
+            local section = tab:Section{
+                Text = "Autotargeting Options", Side = "Right",
+            }
+
+            local playerLabel = section:Label{
+                Text = "Current locked target: None",
+                Color = oh.Constants.StateColors.Invalid
+            }
+            
+            local optionLabel = section:Label{
+                Text = "Current option: " .. (string.sub(targetOption, 1, 1):upper() .. string.sub(targetOption, 2, #targetOption)),
+            }
+
+            section:Toggle{
+                Text = "Toggle autotarget",
+                Callback = function(toggled)
+                    enabled = toggled
+                end
+            }
+
+            section:Input{
+                Text = "Set Target Option",
+                Placeholder = "Locked / Mouse / Character",
+                Callback = function(txt)
+                    for i = #autofill, 1, -1 do
+                        if autofill[i]:find(txt:lower(), 1) then
+                            targetOption = autofill[i]
+                            optionLabel:Set{
+                                Text = "Current option: " .. (string.sub(targetOption, 1, 1):upper() .. string.sub(targetOption, 2, #targetOption)),
+                            }
+                            return
+                        end
+                    end
+
+                    cleanPoints()
+                end
+            }
+            
+            section:Input{
+                Text = "Set Locked Player",
                 Placeholder = "Player DisplayName / Name",
                 Callback = function(txt)
                     local player
@@ -157,22 +281,18 @@ return {
                         end
                     end
                     
-                    labelComponent:Set{
-                        Text = "Current target: " .. if player ~= nil then tostring(player.Name) else "None",
+                    playerLabel:Set{
+                        Text = "Current locked target: " .. if player ~= nil then tostring(player.Name) else "None",
                         Color = if player ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
                     }
                     targetPlayer = player
+                    if not players[player] then
+                        players[player] = {
+                            lastVelocity = Vector3.zero
+                        }
+                    end
                 end
             }
-
-            for k, _ in pairs(spoofedSpells) do
-                spellSpoofSection:Toggle{
-                    Text = k,
-                    Callback = function(v)
-                        spoofedSpells[k] = v
-                    end
-                }
-            end
         end
 
         local function buildDisorderIgnitionSection()
@@ -283,6 +403,7 @@ return {
         end
 
         buildSpellSpoofSection()
+        buildAutotargetSection()
         buildDisorderIgnitionSection()
     end
 }
