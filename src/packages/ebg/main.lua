@@ -30,6 +30,16 @@ end
 
 return {
     init = function(windw)
+        local spoofedSpells = {
+            ['Lightning Flash'] = false,
+            ['Lightning Barrage'] = false,
+            ['Splitting Slime'] = false,
+            ['Illusive Atake'] = false,
+            ['Blaze Column'] = false,
+            ['Refraction'] = false,
+            ['Water Beam'] = false,
+            ['Orbital Strike'] = false,
+        }
         local realMouseCFrame = mouse.Hit
         local overrideMouseCFrame = CFrame.new()
         local isMouseOverriden = false
@@ -47,21 +57,14 @@ return {
 
         oh.Maid:GiveTask(function()
             isMouseOverriden = false
+            for k in pairs(spoofedSpells) do
+                spoofedSpells[k] = false
+            end
         end)
 
         local tab = windw:Tab{Text = "EBG-Exploits"}
         local function buildSpellSpoofSection()
             local remote = ReplicatedStorage:WaitForChild("Remotes").DoMagic
-            local spoofedSpells = {
-                ['Lightning Flash'] = false,
-                ['Lightning Barrage'] = false,
-                ['Splitting Slime'] = false,
-                ['Illusive Atake'] = false,
-                ['Blaze Column'] = false,
-                ['Refraction'] = false,
-                ['Water Beam'] = false,
-                ['Orbital Strike'] = false,
-            }
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
             local oldSpoof; oldSpoof = hookmetamethod(game, '__namecall', function(self, ...)
