@@ -26,7 +26,11 @@ return {
                         local hrp, rhrp = targetChar:FindFirstChild("HumanoidRootPart"), getHRP()
                         if hrp and rhrp then
                             local pos = hrp.Position
-                            rhrp.CFrame = CFrame.new(pos)
+                            local dir = pos + pos.Unit
+                            if hrp.AssemblyLinearVelocity.Magnitude > 0 then
+                                dir = pos + hrp.AssemblyLinearVelocity.Unit
+                            end
+                            rhrp.CFrame = CFrame.lookAt(pos, dir)
                         end
                     end
                 end
