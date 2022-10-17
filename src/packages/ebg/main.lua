@@ -180,7 +180,7 @@ return {
                         targetChar = targetPlayer.Character
                     end
                 elseif targetOption == "mouse" then
-                    local foundPlayer = getNearestPlayerFromPosition(Mouse.Hit.Position)
+                    local foundPlayer = getNearestPlayerFromPosition(mouse.Hit.Position)
                     if foundPlayer then
                         targetChar = foundPlayer.Character
                     end
