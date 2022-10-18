@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TeleportService = game:GetService("TeleportService")
+local UserInputService = game:GetService("UserInputService")
 
 local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
 
@@ -40,6 +41,7 @@ return {
             ['Water Beam'] = false,
             ['Orbital Strike'] = false,
         }
+
         local realMouseCFrame = mouse.Hit
         local overrideMouseCFrame = CFrame.new()
         local isMouseOverriden = false
@@ -47,10 +49,15 @@ return {
             if not checkcaller() then
                 local mouseCFrame = oldMouse(self, key)
                 realMouseCFrame = mouseCFrame
-                if isMouseOverriden and key == "Hit" then
-                    return overrideMouseCFrame
+                if key == "Hit" then
+                    if isMouseOverriden then
+                        return overrideMouseCFrame
+                    else
+                        return mouseCFrame
+                    end
+                else
+                    return oldMouse(self, key)
                 end
-                return mouseCFrame
             end
             return oldMouse(self, key)
         end)
