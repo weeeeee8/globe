@@ -390,7 +390,7 @@ return {
                             local Point: Part = newPoint(i, PREDICTION_INDEX)
                             local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
                             local p
-                            if hrp:FindFirstChildOfClass("BodyPosition") then
+                            if hrp:FindFirstChildOfClass("BodyPosition") or hrp:FindFirstChildOfClass("BodyForce") or hrp:FindFirstChildOfClass("BodyVelocity") then
                                 p = hrp.Position
                             else
                                 p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
