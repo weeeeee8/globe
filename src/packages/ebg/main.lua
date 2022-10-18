@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
 local TeleportService = game:GetService("TeleportService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -210,10 +211,15 @@ return {
                 Text = "Current option: " .. (string.sub(targetOption, 1, 1):upper() .. string.sub(targetOption, 2, #targetOption)),
             }
 
-            section:Toggle{
+            section:Keybind{
                 Text = "Toggle autotarget",
-                Callback = function(toggled)
-                    enabled = toggled
+                Callback = function()
+                    enabled = not enabled
+                    StarterGui:SetCore("SendNotification", {
+                        Title = "[Globe]",
+                        Text = (if enabled then "En" else "Dis") .. "abled Autotargeting",
+                        Duration = 2,
+                    })
                 end
             }
 
@@ -235,6 +241,54 @@ return {
                     if not num then num = 3 end
                     num = math.clamp(num, 1, NUMS_OF_PREDICTIONS)
                     PREDICTION_INDEX = num
+                end
+            }
+
+            section:Input{
+                Text = "Whitelist player",
+                Placeholder = "Whitelist player",
+                Callback = function(txt)
+                    local player
+                    for _, plr in ipairs(Players:GetPlayers()) do
+                        if plr == Players.LocalPlayer then continue end
+                        if plr.DisplayName:find(txt, 1) or plr.Name:find(txt, 1) then
+                            player = plr
+                            break
+                        end
+                    end
+                    
+                    if player and not ignorePlayers[player] then
+                        ignorePlayers[player] = true
+                        StarterGui:SetCore("SendNotification", {
+                            Title = "[Globe]",
+                            Text = "Whitelisted player \"" .. tostring(player) .. "\"",
+                            Duration = 2,
+                        })
+                    end
+                end
+            }
+
+            section:Input{
+                Text = "Unwhitelist player",
+                Placeholder = "Unwhitelist player",
+                Callback = function(txt)
+                    local player
+                    for _, plr in ipairs(Players:GetPlayers()) do
+                        if plr == Players.LocalPlayer then continue end
+                        if plr.DisplayName:find(txt, 1) or plr.Name:find(txt, 1) then
+                            player = plr
+                            break
+                        end
+                    end
+                    
+                    if player and ignorePlayers[player] then
+                        ignorePlayers[player] = nil
+                        StarterGui:SetCore("SendNotification", {
+                            Title = "[Globe]",
+                            Text = "Unwhitelisted player \"" .. tostring(player) .. "\" from autotargeting.",
+                            Duration = 2,
+                        })
+                    end
                 end
             }
 
@@ -294,7 +348,7 @@ return {
                     end
                 end
                 
-                if targetChar then
+                if targetChar and enabled then
                     dirty = true
                     local plr = Players:GetPlayerFromCharacter(targetChar)
                     if _lastPlayer ~= plr then
