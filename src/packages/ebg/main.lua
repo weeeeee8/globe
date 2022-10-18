@@ -172,8 +172,11 @@ return {
                 end
             end
 
-            local function isObstructed(p0, p1)
-                return workspace.Raycast(workspace, p0, p1 - p0) ~= nil
+            local params = RaycastParams.new()
+            params.FilterDescendantsInstances = {workspace.Map}
+            params.FilterType = Enum.RaycastFilterType.Whitelist
+            local function isObstructedByMap(p0, p1)
+                return workspace.Raycast(workspace, p0, p1 - p0, params) ~= nil
             end
 
             local function getNearestPlayerFromPosition(position)
@@ -186,6 +189,7 @@ return {
                     if not hum or hum.Health <= 0 then continue end
                     local d = v:DistanceFromCharacter(position)
                     if d > MINDIST then continue end
+                    if isObstructedByMap(getHRP().Position, hum.RootPart.Position) then continue end
                     table.insert(plrs, {
                         dist = d,
                         plr = v
