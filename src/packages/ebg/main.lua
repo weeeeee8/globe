@@ -397,7 +397,7 @@ return {
                             end
                             Point.Position = p
                             if i == PREDICTION_INDEX then
-                                if isObstructedByMap(hrp.Position, p) or (p - hrp.Position) > 100 then
+                                if isObstructedByMap(hrp.Position, p) or (p - hrp.Position).Magnitude > 100 then
                                     pos = hrp.Position
                                 else
                                     pos = p
