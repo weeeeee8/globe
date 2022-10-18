@@ -98,7 +98,7 @@ return {
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Origin = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
                             elseif SpellName == "Orbital Strike" then
-                                fakeArgs[3] = if isMouseOverriden or mouse.Target then mouse.Hit else realArgs[3]
+                                fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0)) else realArgs[3]
                             end
                             return oldSpoof(self, unpack(fakeArgs))
                         end
