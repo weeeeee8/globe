@@ -129,6 +129,7 @@ return {
             pointsFolder.Parent = workspace
 
             local targetPlayer
+            local respectsObstruction = false
             local enabled = false
             local targetOption = "locked"
             local autofill = {"character", "mouse", "locked"}
@@ -189,7 +190,7 @@ return {
                     if not hum or hum.Health <= 0 then continue end
                     local d = v:DistanceFromCharacter(position)
                     if d > MINDIST then continue end
-                    if isObstructedByMap(getHRP().Position, hum.RootPart.Position) then continue end
+                    if respectsObstruction == true and isObstructedByMap(getHRP().Position, hum.RootPart.Position) then continue end
                     table.insert(plrs, {
                         dist = d,
                         plr = v
@@ -229,6 +230,13 @@ return {
                         Text = (if enabled then "En" else "Dis") .. "abled Autotargeting",
                         Duration = 2,
                     })
+                end
+            }
+
+            section:Toggle{
+                Text = "Respect Terrain",
+                Callback = function(toggle)
+                    respectsObstruction = toggle
                 end
             }
 
