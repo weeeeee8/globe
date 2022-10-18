@@ -172,6 +172,10 @@ return {
                 end
             end
 
+            local function isObstructed(p0, p1)
+                return workspace.Raycast(workspace, p0, p1 - p0) ~= nil
+            end
+
             local function getNearestPlayerFromPosition(position)
                 local plrs = {}
                 for _,v in ipairs(Players:GetPlayers()) do
@@ -182,6 +186,7 @@ return {
                     if not hum or hum.Health <= 0 then continue end
                     local d = v:DistanceFromCharacter(position)
                     if d > MINDIST then continue end
+                    if isObstructed(getHRP().Position, hum.RootPart.Position) then continue end
                     table.insert(plrs, {
                         dist = d,
                         plr = v
