@@ -397,7 +397,11 @@ return {
                             end
                             Point.Position = p
                             if i == PREDICTION_INDEX then
-                                pos = p
+                                if isObstructedByMap(hrp.Position, p) or ((hrp.Position + velocity * 1 + 0.5 * accel * (1 * 1)) - hrp.Position) > 100 then
+                                    pos = hrp.Position
+                                else
+                                    pos = p
+                                end
                             end
                         end
         
