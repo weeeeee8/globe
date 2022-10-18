@@ -78,10 +78,10 @@ return {
                             if SpellName == "Lightning Flash" then
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Origin = realArgs[3].Origin
-                                fakeArgs[3].End = if mouse.Target then realMouseCFrame else realArgs[3].End
+                                fakeArgs[3].End = realMouseCFrame
                             elseif SpellName == "Lightning Barrage" then
                                 fakeArgs[3] = {}
-                                fakeArgs[3].End = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position) else realArgs[3].Direction
+                                fakeArgs[3].Direction = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position) else realArgs[3].Direction
                             elseif SpellName == "Refraction" then
                                 fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 20, 0), mouse.Hit.Position) else realArgs[3]
                             elseif SpellName == "Splitting Slime" or SpellName == "Illusive Atake" then
@@ -116,6 +116,7 @@ return {
             local NUMS_OF_PREDICTIONS = 10
             local FIXED_TIME_SCALE = 1
             local PREDICTION_INDEX = 5
+            local MINDIST = 200
 
             local pointsFolder = workspace:FindFirstChild(".points") or Instance.new("Folder", workspace)
             pointsFolder.Parent = workspace
@@ -127,6 +128,14 @@ return {
             local players = {}
             local ignorePlayers= {[Players.LocalPlayer] = true}
             local points = {}
+            oh.Maid:GiveTask(function()
+                table.clear(ignorePlayers)
+                for _, v in ipairs(points) do
+                    v:Destroy()
+                end
+                table.clear(points)
+                targetPlayer = nil
+            end)
 
             local function newPoint(index, i)
                 local point = points[index]
@@ -164,8 +173,10 @@ return {
                     local hum = v.Character:FindFirstChild("Humanoid")
                     if v.Character:FindFirstChildOfClass("ForceField") then continue end
                     if not hum or hum.Health <= 0 then continue end
+                    local d = v:DistanceFromCharacter(position)
+                    if d > MINDIST then continue end
                     table.insert(plrs, {
-                        dist = v:DistanceFromCharacter(position),
+                        dist = d,
                         plr = v
                     })
                 end
@@ -197,6 +208,16 @@ return {
                 Text = "Toggle autotarget",
                 Callback = function(toggled)
                     enabled = toggled
+                end
+            }
+
+            section:Input{
+                Text = "Set Minimum Distance",
+                Placeholder = "Minimum Distance",
+                Callback = function(txt)
+                    local num = tonumber(txt)
+                    if not num then num = 200 end
+                    MINDIST = num
                 end
             }
 
