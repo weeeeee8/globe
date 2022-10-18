@@ -186,7 +186,6 @@ return {
                     if not hum or hum.Health <= 0 then continue end
                     local d = v:DistanceFromCharacter(position)
                     if d > MINDIST then continue end
-                    if isObstructed(getHRP().Position, hum.RootPart.Position) then continue end
                     table.insert(plrs, {
                         dist = d,
                         plr = v
