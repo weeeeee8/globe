@@ -42,22 +42,21 @@ return {
             ['Orbital Strike'] = false,
         }
 
-        local realMouseCFrame = mouse.Hit
+        local function getMouseWorldPosition()
+            local pos = UserInputService:GetMouseLocation()
+            local ray = workspace.CurrentCamera:ViewportPointToRay(pos.X, pos.Y)
+            local result = workspace:Raycast(ray.Origin, ray.Direction * 2000)
+            return if result then result.Position else ray.Origin + (ray.Direction * 2000)
+        end
+
         local overrideMouseCFrame = CFrame.new()
         local isMouseOverriden = false
         local oldMouse; oldMouse = hookmetamethod(mouse, '__index', function(self, key)
             if not checkcaller() then
-                local mouseCFrame = oldMouse(self, key)
-                realMouseCFrame = mouseCFrame
-                if key == "Hit" then
-                    if isMouseOverriden then
-                        return overrideMouseCFrame
-                    else
-                        return mouseCFrame
-                    end
-                else
-                    return oldMouse(self, key)
+                if isMouseOverriden and key == "Hit" then
+                    return overrideMouseCFrame
                 end
+                return oldMouse(self, key)
             end
             return oldMouse(self, key)
         end)
@@ -85,7 +84,7 @@ return {
                             if SpellName == "Lightning Flash" then
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Origin = realArgs[3].Origin
-                                fakeArgs[3].End = realMouseCFrame
+                                fakeArgs[3].End = getMouseWorldPosition()
                             elseif SpellName == "Lightning Barrage" then
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Direction = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position - Vector3.new(0, 17, 0), mouse.Hit.Position) else realArgs[3].Direction
