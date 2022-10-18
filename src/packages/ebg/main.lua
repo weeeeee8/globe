@@ -213,6 +213,7 @@ return {
 
             section:Keybind{
                 Text = "Toggle autotarget",
+                Default = Enum.KeyCode.C,
                 Callback = function()
                     enabled = not enabled
                     StarterGui:SetCore("SendNotification", {
@@ -257,7 +258,7 @@ return {
                         end
                     end
                     
-                    if player and not ignorePlayers[player] then
+                    if player and ignorePlayers[player] == nil then
                         ignorePlayers[player] = true
                         StarterGui:SetCore("SendNotification", {
                             Title = "[Globe]",
@@ -281,7 +282,7 @@ return {
                         end
                     end
                     
-                    if player and ignorePlayers[player] then
+                    if player and ignorePlayers[player] ~= nil then
                         ignorePlayers[player] = nil
                         StarterGui:SetCore("SendNotification", {
                             Title = "[Globe]",
