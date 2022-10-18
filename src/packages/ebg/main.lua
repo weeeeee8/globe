@@ -44,8 +44,8 @@ return {
         }
 
         local function getMouseWorldPosition()
-            local pos = UserInputService:GetMouseLocation()
-            local ray = workspace.CurrentCamera:ViewportPointToRay(pos.X, pos.Y)
+            local pos = UserInputService.GetMouseLocation(UserInputService)
+            local ray = workspace.CurrentCamera.ViewportPointToRay(workspace.CurrentCamera, pos.X, pos.Y)
             local result = workspace.Raycast(workspace, ray.Origin, ray.Direction * 2000)
             return if result then result.Position else ray.Origin + (ray.Direction * 2000)
         end
