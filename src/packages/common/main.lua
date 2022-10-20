@@ -94,7 +94,7 @@ return {
                     if not disabled then
                         local character = Players.LocalPlayer.Character
                         enabled = not enabled
-                        settings().NetworkSettings.IncomingReplicationLag = enabled and 1000 or 0
+                        settings().Network.IncomingReplicationLag = enabled and 1000 or 0
                     end
                 end,
             }
