@@ -75,12 +75,38 @@ return {
 
         local function buildLagSwitchSection()
             local enabled = false
-            local frequency = 25
+            local oldRootPart
+            local fakeRootPart
 
             local section = tab:Section{
                 Text = "Lag Switch Options",
                 Side = "Right",
             }
+
+            tab:Keybind{
+                Text = "Simulate Lagswitch",
+                Callback = function()
+                    local character = Players.LocalPlayer.Character
+                    enabled = not enabled
+                    if not enabled then
+                        if fakeRootPart and oldRootPart then
+                            oldRootPart.Parent = character
+                            fakeRootPart:Destroy()
+                            fakeRootPart = nil
+                            oldRootPart = nil
+                        end
+                    else
+                        oldRootPart = character.HumanoidRootPart
+                        oldRootPart.Parent = nil
+
+                        fakeRootPart = character.HumanoidRootPart:Clone()
+                        fakeRootPart.RootJoint.C1 = character.Torso
+                        fakeRootPart.Parent = character
+                    end
+                end,
+            }
+
+            return section
         end
 
         local function buildRejoiningSection()
@@ -100,6 +126,7 @@ return {
         buildFlySection()
         buildTeleportSection()
         buildRejoiningSection()
+        buildLagSwitchSection()
         tab:Select()
     end
 }
