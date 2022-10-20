@@ -83,7 +83,7 @@ return {
                 Side = "Right",
             }
 
-            tab:Keybind{
+            section:Keybind{
                 Text = "Simulate Lagswitch",
                 Callback = function()
                     local character = Players.LocalPlayer.Character
