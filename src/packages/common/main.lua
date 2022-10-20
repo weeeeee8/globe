@@ -106,12 +106,11 @@ return {
                         privateMaid:DoCleaning()
                     else
                         local fakeChar = realCharacter:Clone()
+                        realCharacter.HumanoidRootPart.Anchored = true
+                        print(fakeChar.Humanoid)
                         fakeChar.Parent = workspace
                         Players.LocalPlayer.Character = fakeChar
-                        realCharacter.HumanoidRootPart.Anchored = true
-                        realCharacter.Parent = nil
                         privateMaid:GiveTask(function()
-                            realCharacter.Parent = workspace
                             realCharacter.HumanoidRootPart.Anchored = false
                             realCharacter:PivotTo(fakeChar:GetPivot())
                             Players.LocalPlayer.Character = realCharacter
