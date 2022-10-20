@@ -99,6 +99,7 @@ return {
                         else
                             disabled = true
                             local rhrp = character.HumanoidRootPart
+                            rhrp.Name = "RealRootPart"
                             local fakeRootPart = Instance.new("Part")
                             fakeRootPart.Transparency = 1
                             fakeRootPart.CFrame = rhrp.CFrame
@@ -115,6 +116,7 @@ return {
                             disabled = false
                             privateMaid:GiveTask(function()
                                 disabled = true
+                                rhrp.Name = "HumanoidRootPart"
                                 rhrp.Anchored = false
                                 rhrp.CFrame = fakeRootPart.CFrame
                                 task.wait()
