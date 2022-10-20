@@ -79,9 +79,13 @@ return {
             local enabled = false
 
             local realCharacter
-            local function onCharacterAdded(char) realCharacter = char char:WaitForChild("Humanoid").Died:Once(function()
-                realCharacter = nil
-            end) end
+            local function onCharacterAdded(char)
+                realCharacter = char
+                realCharacter.Archivable = true 
+                char:WaitForChild("Humanoid").Died:Once(function()
+                    realCharacter = nil
+                end) 
+            end
             oh.Maid:GiveTask(Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded))
             if Players.LocalPlayer.Character then onCharacterAdded(Players.LocalPlayer.Character) end
 
@@ -101,26 +105,15 @@ return {
                     if not enabled then
                         privateMaid:DoCleaning()
                     else
-                        local model = Instance.new("Model")
-                        model.Name = Players.LocalPlayer.Name .. "FakeSubject"
-                        
-                        local humanoidRootPart = Instance.new("Part")
-                        humanoidRootPart.Size = Vector3.new(1, 2, 1)
-                        humanoidRootPart.Transparency = 0.5
-                        humanoidRootPart.Parent = model
-
-                        local humanoid = Instance.new("Humanoid")
-                        humanoid.Parent = model
-
-                        model:PivotTo(realCharacter:GetPivot())
-                        model.Parent = workspace
-                        Players.LocalPlayer.Character = model
+                        local fakeChar = realCharacter:Clone()
+                        fakeChar.Parent = workspace
+                        Players.LocalPlayer.Character = fakeChar
                         realCharacter.Parent = nil
                         privateMaid:GiveTask(function()
                             realCharacter.Parent = workspace
-                            realCharacter:PivotTo(model:GetPivot())
+                            realCharacter:PivotTo(fakeChar:GetPivot())
                             Players.LocalPlayer.Character = realCharacter
-                            model:Destroy()
+                            fakeChar:Destroy()
                         end)
                     end
                 end,
