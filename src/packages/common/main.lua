@@ -108,9 +108,11 @@ return {
                         local fakeChar = realCharacter:Clone()
                         fakeChar.Parent = workspace
                         Players.LocalPlayer.Character = fakeChar
+                        realCharacter.HumanoidRootPart.Anchored = true
                         realCharacter.Parent = nil
                         privateMaid:GiveTask(function()
                             realCharacter.Parent = workspace
+                            realCharacter.HumanoidRootPart.Anchored = false
                             realCharacter:PivotTo(fakeChar:GetPivot())
                             Players.LocalPlayer.Character = realCharacter
                             fakeChar:Destroy()
