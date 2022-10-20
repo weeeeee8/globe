@@ -73,6 +73,16 @@ return {
             }
         end
 
+        local function buildLagSwitchSection()
+            local enabled = false
+            local frequency = 25
+
+            local section = tab:Section{
+                Text = "Lag Switch Options",
+                Side = "Right",
+            }
+        end
+
         local function buildRejoiningSection()
             local rejoinSection = tab:Section{
                 Text = "Rejoining Options",

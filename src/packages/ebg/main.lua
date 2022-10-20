@@ -158,21 +158,21 @@ return {
             }
 
             section:Keybind{
-                Text = "Toggle autotarget",
-                Default = Enum.KeyCode.C,
+                Text = "Toggle Aura",
+                Default = Enum.KeyCode.Z,
                 Callback = function()
                     enabled = not enabled
                     StarterGui:SetCore("SendNotification", {
                         Title = "[Globe]",
-                        Text = (if enabled then "En" else "Dis") .. "abled Autotargeting",
+                        Text = (if enabled then "En" else "Dis") .. "abled Punch Aura",
                         Duration = 2,
                     })
                 end
             }
 
             section:Input{
-                Text = "Whitelist player",
-                Placeholder = "Whitelist player",
+                Text = "Blacklist player",
+                Placeholder = "Blacklist player",
                 Callback = function(txt)
                     if #txt <= 0 then return end
                     local player
@@ -188,7 +188,7 @@ return {
                         ignorePlayers[player] = true
                         StarterGui:SetCore("SendNotification", {
                             Title = "[Globe]",
-                            Text = "Whitelisted player \"" .. tostring(player) .. "\"",
+                            Text = "Blacklisted player \"" .. tostring(player) .. "\" for punch aura",
                             Duration = 2,
                         })
                     end
@@ -196,8 +196,8 @@ return {
             }
 
             section:Input{
-                Text = "Unwhitelist player",
-                Placeholder = "Unwhitelist player",
+                Text = "Unblacklist player",
+                Placeholder = "Unblacklist player",
                 Callback = function(txt)
                     if #txt <= 0 then return end
                     local player
@@ -213,7 +213,7 @@ return {
                         ignorePlayers[player] = nil
                         StarterGui:SetCore("SendNotification", {
                             Title = "[Globe]",
-                            Text = "Unwhitelisted player \"" .. tostring(player) .. "\" from autotargeting.",
+                            Text = "Unblacklisted player \"" .. tostring(player) .. "\" from punch aura.",
                             Duration = 2,
                         })
                     end
@@ -429,8 +429,8 @@ return {
             }
 
             section:Input{
-                Text = "Whitelist player",
-                Placeholder = "Whitelist player",
+                Text = "Blacklist player",
+                Placeholder = "Blacklist player",
                 Callback = function(txt)
                     if #txt <= 0 then return end
                     local player
@@ -446,7 +446,7 @@ return {
                         ignorePlayers[player] = true
                         StarterGui:SetCore("SendNotification", {
                             Title = "[Globe]",
-                            Text = "Whitelisted player \"" .. tostring(player) .. "\"",
+                            Text = "Blacklisted player \"" .. tostring(player) .. "\" for autotargeting",
                             Duration = 2,
                         })
                     end
@@ -454,8 +454,8 @@ return {
             }
 
             section:Input{
-                Text = "Unwhitelist player",
-                Placeholder = "Unwhitelist player",
+                Text = "Unblacklist player",
+                Placeholder = "Unblacklist player",
                 Callback = function(txt)
                     if #txt <= 0 then return end
                     local player
@@ -471,7 +471,7 @@ return {
                         ignorePlayers[player] = nil
                         StarterGui:SetCore("SendNotification", {
                             Title = "[Globe]",
-                            Text = "Unwhitelisted player \"" .. tostring(player) .. "\" from autotargeting.",
+                            Text = "Unblacklisted player \"" .. tostring(player) .. "\" from autotargeting.",
                             Duration = 2,
                         })
                     end
@@ -556,7 +556,7 @@ return {
                         local hrp = targetChar:FindFirstChild("HumanoidRootPart")
                         if hrp then
                             if autoPredictIndex then
-                                falsePredictionIndex = math.clamp((hrp.Position - rhrp.Position).Magnitude / 10, 1, NUMS_OF_PREDICTIONS)
+                                falsePredictionIndex = math.clamp(math.floor((hrp.Position - rhrp.Position).Magnitude / 10 + 0.5), 1, NUMS_OF_PREDICTIONS)
                             end
 
                             local data = players[plr]
