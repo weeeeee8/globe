@@ -89,7 +89,7 @@ return {
 
             section:Keybind{
                 Text = "Simulate Lagswitch",
-                Default = Enum.KeyCode.T,
+                Default = Enum.KeyCode.V,
                 Callback = function()
                     if not disabled then
                         local character = Players.LocalPlayer.Character
@@ -106,13 +106,21 @@ return {
                             task.wait()
                             character.HumanoidRootPart.Anchored = true
                             character.HumanoidRootPart.RootJoint.Part0 = fakeRootPart
+                            character.HumanoidRootPart.RootJoint.Part1 = character.Torso
+                            character.HumanoidRootPart.RootJoint.C0 = CFrame.identity
+                            character.HumanoidRootPart.RootJoint.C1 = CFrame.identity
                             disabled = false
                             privateMaid:GiveTask(function()
+                                disabled = true
                                 character.HumanoidRootPart.Anchored = false
                                 character.HumanoidRootPart.CFrame = fakeRootPart.CFrame
                                 character.HumanoidRootPart.RootJoint.Part0 = character.HumanoidRootPart.RootJoint
+                                character.HumanoidRootPart.RootJoint.Part1 = character.Torso
+                                character.HumanoidRootPart.RootJoint.C0 = CFrame.identity
+                                character.HumanoidRootPart.RootJoint.C1 = CFrame.identity
                                 task.wait()
                                 fakeRootPart:Destroy()
+                                disabled = false
                             end)
                         end
                     end
