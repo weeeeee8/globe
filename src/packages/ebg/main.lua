@@ -119,6 +119,162 @@ return {
             end
         end
 
+        local function buildPunchAuraSection()
+            local MINDIST = 20
+
+            local enabled = false
+            local ignorePlayers= {[Players.LocalPlayer] = true}
+            local remote = ReplicatedStorage:WaitForChild("Remotes").Combat
+
+            oh.Maid:GiveTask(function()
+                table.clear(ignorePlayers)
+            end)
+
+            local function getNearestPlayerFromPosition(position)
+                local plrs = {}
+                for _,v in ipairs(Players:GetPlayers()) do
+                    if ignorePlayers[v] then continue end
+                    if not v.Character then continue end   
+                    local hum = v.Character:FindFirstChild("Humanoid")
+                    if v.Character:FindFirstChildOfClass("ForceField") then continue end
+                    if not hum or hum.Health <= 0 then continue end
+                    local d = v:DistanceFromCharacter(position)
+                    if d > MINDIST then continue end
+                    table.insert(plrs, {
+                        dist = d,
+                        plr = v
+                    })
+                end
+        
+                table.sort(plrs, function(a, b)
+                    return a.dist < b.dist
+                end)
+        
+                return if plrs[1] then plrs[1].plr else nil
+            end
+
+            local section = tab:Section{
+                Text = "Punch Aura Options", Side = "Right",
+            }
+
+            section:Keybind{
+                Text = "Toggle autotarget",
+                Default = Enum.KeyCode.C,
+                Callback = function()
+                    enabled = not enabled
+                    StarterGui:SetCore("SendNotification", {
+                        Title = "[Globe]",
+                        Text = (if enabled then "En" else "Dis") .. "abled Autotargeting",
+                        Duration = 2,
+                    })
+                end
+            }
+
+            section:Input{
+                Text = "Whitelist player",
+                Placeholder = "Whitelist player",
+                Callback = function(txt)
+                    if #txt <= 0 then return end
+                    local player
+                    for _, plr in ipairs(Players:GetPlayers()) do
+                        if plr == Players.LocalPlayer then continue end
+                        if plr.DisplayName:find(txt, 1) or plr.Name:find(txt, 1) then
+                            player = plr
+                            break
+                        end
+                    end
+                    
+                    if player and ignorePlayers[player] == nil then
+                        ignorePlayers[player] = true
+                        StarterGui:SetCore("SendNotification", {
+                            Title = "[Globe]",
+                            Text = "Whitelisted player \"" .. tostring(player) .. "\"",
+                            Duration = 2,
+                        })
+                    end
+                end
+            }
+
+            section:Input{
+                Text = "Unwhitelist player",
+                Placeholder = "Unwhitelist player",
+                Callback = function(txt)
+                    if #txt <= 0 then return end
+                    local player
+                    for _, plr in ipairs(Players:GetPlayers()) do
+                        if plr == Players.LocalPlayer then continue end
+                        if plr.DisplayName:find(txt, 1) or plr.Name:find(txt, 1) then
+                            player = plr
+                            break
+                        end
+                    end
+                    
+                    if player and ignorePlayers[player] ~= nil then
+                        ignorePlayers[player] = nil
+                        StarterGui:SetCore("SendNotification", {
+                            Title = "[Globe]",
+                            Text = "Unwhitelisted player \"" .. tostring(player) .. "\" from autotargeting.",
+                            Duration = 2,
+                        })
+                    end
+                end
+            }
+
+            oh.Maid:GiveTask(RunService.Heartbeat:Connect(function()
+                if enabled then
+                    local rhrp = getHRP()
+                    if rhrp then
+                        local targetPlayer = getNearestPlayerFromPosition(rhrp.Position)
+                        if targetPlayer then
+                            remote:FireServer(1)
+                            remote:FireServer(targetPlayer.Character)
+                        end
+                    end
+                end
+            end))
+        end
+
+        local function buildTechDiskSection()
+            local conns = {}
+            function conns:Destroy()
+                for _, v in ipairs(self) do
+                    v:Disconnect()
+                    v = nil
+                end
+            end
+
+            oh.Maid:GiveTask(conns)
+
+            local section = tab:Section{
+                Text = "Disable Tech Lag State", Side = "Right",
+            }
+
+            section:Toggle{
+                Text = "Disable All",
+                Callback = function(toggle)
+                    if not toggle then
+                        conns:Destroy()
+                    else
+                        table.insert(conns, game.Players.LocalPlayer.PlayerScripts.ChildAdded:Connect(function(c)
+                            if c.Name == "DiscScript" then
+                                  c.Disabled = true
+                                task.delay(1, c.Destroy, c)
+                            end
+                        end))
+
+                        table.insert(conns, workspace['.Ignore']['.LocalEffects'].ChildAdded:Connect(function(c)
+                            if c.Name == "LightDisc" then
+                                task.delay(1, c.Destroy, c)
+                            end
+                            if c.Name == "DeadlyDisc" then
+                                task.delay(1, c.Destroy, c)
+                            end
+                        end))
+                    end
+                end,
+            }
+        end
+
         local function buildAutotargetSection()
             local NUMS_OF_PREDICTIONS = 10
             local FIXED_TIME_SCALE = 1
@@ -129,6 +285,8 @@ return {
             pointsFolder.Parent = workspace
 
             local targetPlayer
+            local falsePredictionIndex = PREDICTION_INDEX
+            local autoPredictIndex = false
             local respectsObstruction = false
             local enabled = false
             local targetOption = "locked"
@@ -240,6 +398,14 @@ return {
                 end
             }
 
+            section:Toggle{
+                Text = "Auto Index",
+                Callback = function(toggle)
+                    autoPredictIndex = toggle
+                end
+            }
+
+
             section:Input{
                 Text = "Set Minimum Distance",
                 Placeholder = "Minimum Distance",
@@ -258,6 +424,7 @@ return {
                     if not num then num = 3 end
                     num = math.clamp(num, 1, NUMS_OF_PREDICTIONS)
                     PREDICTION_INDEX = num
+                    falsePredictionIndex = PREDICTION_INDEX
                 end
             }
 
@@ -346,95 +513,99 @@ return {
 
             
             oh.Maid:GiveTask(RunService.Stepped:Connect(function(_, dt)
-                local pos = Vector3.zero
-                local targetChar
-                if targetOption == "locked" then
-                    if targetPlayer then
-                        targetChar = targetPlayer.Character
-                    end
-                elseif targetOption == "mouse" then
-                    local foundPlayer = getNearestPlayerFromPosition(getMouseWorldPosition())
-                    if foundPlayer then
-                        targetChar = foundPlayer.Character
-                    end
-                elseif targetOption == "character" then
-                    local rhrp = getHRP()
-                    if rhrp then
+                local rhrp = getHRP()
+                if rhrp then
+                    local pos = Vector3.zero
+                    local targetChar
+                    if targetOption == "locked" then
+                        if targetPlayer then
+                            targetChar = targetPlayer.Character
+                        end
+                    elseif targetOption == "mouse" then
+                        local foundPlayer = getNearestPlayerFromPosition(getMouseWorldPosition())
+                        if foundPlayer then
+                            targetChar = foundPlayer.Character
+                        end
+                    elseif targetOption == "character" then
                         local foundPlayer = getNearestPlayerFromPosition(rhrp.Position)
                         if foundPlayer then
                             targetChar = foundPlayer.Character
                         end
                     end
-                end
-                
-                if targetChar and enabled then
-                    dirty = true
-                    local plr = Players:GetPlayerFromCharacter(targetChar)
-                    if _lastPlayer ~= plr then
-                        _lastPlayer = plr
+                    
+                    if targetChar and enabled then
+                        dirty = true
+                        local plr = Players:GetPlayerFromCharacter(targetChar)
+                        if _lastPlayer ~= plr then
+                            _lastPlayer = plr
 
-                        playerLabel:Set{
-                            Text = "Current locked target: " .. if plr ~= nil then tostring(plr.Name) else "None",
-                            Color = if plr ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
-                        }
-                    end
+                            playerLabel:Set{
+                                Text = "Current locked target: " .. if plr ~= nil then tostring(plr.Name) else "None",
+                                Color = if plr ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
+                            }
+                        end
 
-                    if not players[plr] then
-                        players[plr] = {
-                            lastVelocity = Vector3.zero
-                        }
-                    end
+                        if not players[plr] then
+                            players[plr] = {
+                                lastVelocity = Vector3.zero
+                            }
+                        end
 
-                    local foundForceFied = targetChar:FindFirstChildOfClass("ForceField")
-                    if foundForceFied then return end
-                    local hrp = targetChar:FindFirstChild("HumanoidRootPart")
-                    if hrp then
-                        local data = players[plr]
-        
-                        local velocity = hrp.AssemblyLinearVelocity
-                        local accel = (velocity-data.lastVelocity) / dt
-        
-                        for i = 1, NUMS_OF_PREDICTIONS do
-                            local Point: Part = newPoint(i, PREDICTION_INDEX)
-                            local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
-                            local p
-                            if hrp:FindFirstChildOfClass("BodyPosition") or hrp:FindFirstChildOfClass("BodyForce") or hrp:FindFirstChildOfClass("BodyVelocity") then
-                                p = hrp.Position
-                            else
-                                p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
+                        local foundForceFied = targetChar:FindFirstChildOfClass("ForceField")
+                        if foundForceFied then cleanPoints() return end
+                        local hrp = targetChar:FindFirstChild("HumanoidRootPart")
+                        if hrp then
+                            if autoPredictIndex then
+                                falsePredictionIndex = math.clamp((hrp.Position - rhrp.Position).Magnitude / 10, 1, NUMS_OF_PREDICTIONS)
                             end
-                            Point.Position = p
-                            if i == PREDICTION_INDEX then
-                                if isObstructedByMap(hrp.Position, p) or (p - hrp.Position).Magnitude > 100 then
-                                    pos = hrp.Position
+
+                            local data = players[plr]
+            
+                            local velocity = hrp.AssemblyLinearVelocity
+                            local accel = (velocity-data.lastVelocity) / dt
+            
+                            for i = 1, NUMS_OF_PREDICTIONS do
+                                local Point: Part = newPoint(i, PREDICTION_INDEX)
+                                local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
+                                local p
+                                if hrp:FindFirstChildOfClass("BodyPosition") or hrp:FindFirstChildOfClass("BodyForce") or hrp:FindFirstChildOfClass("BodyVelocity") then
+                                    p = hrp.Position
                                 else
-                                    pos = p
+                                    p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
+                                end
+                                Point.Position = p
+                                if i == (if autoPredictIndex then falsePredictionIndex else PREDICTION_INDEX) then
+                                    if isObstructedByMap(hrp.Position, p) or (p - hrp.Position).Magnitude > 100 then
+                                        pos = hrp.Position
+                                    else
+                                        pos = p
+                                    end
                                 end
                             end
+            
+                            data.lastVelocity = velocity
                         end
-        
-                        data.lastVelocity = velocity
+                    else
+                        if dirty then
+                            dirty = false
+                            cleanPoints()
+                            playerLabel:Set{
+                                Text = "Current locked target: None",
+                                Color = oh.Constants.StateColors.Invalid
+                            }
+                        end
                     end
-                else
-                    if dirty then
-                        dirty = false
-                        cleanPoints()
-                        playerLabel:Set{
-                            Text = "Current locked target: None",
-                            Color = oh.Constants.StateColors.Invalid
-                        }
-                    end
-                end
-        
-                overrideMouseCFrame = CFrame.new(pos)
-                if enabled == true then
-                    if pos ~= Vector3.zero then
-                        isMouseOverriden = true
+            
+                    overrideMouseCFrame = CFrame.new(pos)
+                    if enabled == true then
+                        if pos ~= Vector3.zero then
+                            isMouseOverriden = true
+                        else
+                            isMouseOverriden = false
+                        end
                     else
                         isMouseOverriden = false
                     end
-                else
-                    isMouseOverriden = false
                 end
             end))
         end
@@ -546,8 +717,10 @@ return {
             }
         end
 
+        buildTechDiskSection()
         buildSpellSpoofSection()
         buildAutotargetSection()
         buildDisorderIgnitionSection()
+        buildPunchAuraSection()
     end
 }
