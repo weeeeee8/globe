@@ -79,22 +79,6 @@ return {
             local enabled = false
             local disabled = false
 
-            local realCharacter
-            local function fixcam()
-                workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
-                task.wait(0.02)
-                workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
-            end
-            local function onCharacterAdded(char)
-                realCharacter = char
-                realCharacter.Archivable = true 
-                char:WaitForChild("Humanoid").Died:Once(function()
-                    realCharacter = nil
-                end) 
-            end
-            oh.Maid:GiveTask(Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded))
-            if Players.LocalPlayer.Character then onCharacterAdded(Players.LocalPlayer.Character) end
-
             local privateMaid = Maid.new()
             oh.Maid:GiveTask(privateMaid)
 
@@ -108,26 +92,27 @@ return {
                 Default = Enum.KeyCode.T,
                 Callback = function()
                     if not disabled then
+                        local character = Players.LocalPlayer.Character
                         enabled = not enabled
                         if not enabled then
                             privateMaid:DoCleaning()
                         else
                             disabled = true
-                            local fakeChar = realCharacter:Clone()
-                            local character = realCharacter
-                            realCharacter.HumanoidRootPart.Anchored = true
-                            fakeChar.Parent = workspace
-                            Players.LocalPlayer.Character = fakeChar
-                            fixcam()
+                            local fakeRootPart = Instance.new("Part")
+                            fakeRootPart.Transparency = 1
+                            fakeRootPart.CFrame = character.HumanoidRootPart.CFrame
+                            fakeRootPart.Size = character.HumanoidRootPart.Size
+                            fakeRootPart.Parent = character
+                            task.wait()
+                            character.HumanoidRootPart.Anchored = true
+                            character.HumanoidRootPart.RootJoint.Part0 = fakeRootPart
                             disabled = false
                             privateMaid:GiveTask(function()
                                 character.HumanoidRootPart.Anchored = false
-                                character:PivotTo(fakeChar:GetPivot())
-                                Players.LocalPlayer.Character = character
-                                disabled = true
-                                fixcam()
-                                disabled = false
-                                fakeChar:Destroy()
+                                character.HumanoidRootPart.CFrame = fakeRootPart.CFrame
+                                character.HumanoidRootPart.RootJoint.Part0 = character.HumanoidRootPart.RootJoint
+                                task.wait()
+                                fakeRootPart:Destroy()
                             end)
                         end
                     end
