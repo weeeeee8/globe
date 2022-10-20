@@ -103,7 +103,12 @@ return {
                             fakeRootPart.Transparency = 1
                             fakeRootPart.CFrame = rhrp.CFrame
                             fakeRootPart.Size = rhrp.Size
+                            fakeRootPart.Name = "HumanoidRootPart"
                             fakeRootPart.Parent = character
+                            local fakeJoint = Instance.new("Motor6D")
+                            fakeJoint.C0 = fakeRootPart
+                            fakeJoint.C1 = character.Torso
+                            fakeJoint.Parent = fakeRootPart
                             rhrp.Anchored = true
                             task.wait()
                             rhrp.RootJoint.Enabled = false
