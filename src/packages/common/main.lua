@@ -116,6 +116,7 @@ return {
                             print(character.Humanoid)
                             character:PivotTo(fakeChar:GetPivot())
                             Players.LocalPlayer.Character = character
+                            task.wait(0.02)
                             fakeChar:Destroy()
                         end)
                     end
