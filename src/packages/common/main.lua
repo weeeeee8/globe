@@ -3,6 +3,8 @@ local TeleportService = game:GetService("TeleportService")
 
 local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
 
+local Maid = import('lib/maid')
+
 local FlyAPI = import('packages/common/fly')
 FlyAPI.Start()
 
@@ -75,8 +77,16 @@ return {
 
         local function buildLagSwitchSection()
             local enabled = false
-            local oldRootPart
-            local fakeRootPart
+
+            local realCharacter
+            local function onCharacterAdded(char) realCharacter = char char:WaitForChild("Humanoid").Died:Once(function()
+                realCharacter = nil
+            end) end
+            oh.Maid:GiveTask(Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded))
+            if Players.LocalPlayer.Character then onCharacterAdded(Players.LocalPlayer.Character) end
+
+            local privateMaid = Maid.new()
+            oh.Maid:GiveTask(privateMaid)
 
             local section = tab:Section{
                 Text = "Lag Switch Options",
@@ -85,23 +95,33 @@ return {
 
             section:Keybind{
                 Text = "Simulate Lagswitch",
+                Default = Enum.KeyCode.N,
                 Callback = function()
-                    local character = Players.LocalPlayer.Character
                     enabled = not enabled
                     if not enabled then
-                        if fakeRootPart and oldRootPart then
-                            oldRootPart.Parent = character
-                            fakeRootPart:Destroy()
-                            fakeRootPart = nil
-                            oldRootPart = nil
-                        end
+                        privateMaid:DoCleaning()
                     else
-                        oldRootPart = character.HumanoidRootPart
-                        oldRootPart.Parent = nil
+                        local model = Instance.new("Model")
+                        model.Name = Players.LocalPlayer.Name .. "FakeSubject"
+                        
+                        local humanoidRootPart = Instance.new("Part")
+                        humanoidRootPart.Size = Vector3.new(1, 2, 1)
+                        humanoidRootPart.Transparency = 0.5
+                        humanoidRootPart.Parent = model
 
-                        fakeRootPart = character.HumanoidRootPart:Clone()
-                        fakeRootPart.RootJoint.C1 = character.Torso
-                        fakeRootPart.Parent = character
+                        local humanoid = Instance.new("Humanoid")
+                        humanoid.Parent = model
+
+                        model:PivotTo(realCharacter:GetPivot())
+                        model.Parent = workspace
+                        Players.LocalPlayer.Character = model
+                        realCharacter.Parent = nil
+                        privateMaid:GiveTask(function()
+                            realCharacter.Parent = workspace
+                            realCharacter:PivotTo(model:GetPivot())
+                            Players.LocalPlayer.Character = realCharacter
+                            model:Destroy()
+                        end)
                     end
                 end,
             }
