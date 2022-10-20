@@ -98,27 +98,22 @@ return {
                             privateMaid:DoCleaning()
                         else
                             disabled = true
+                            local rhrp = character.HumanoidRootPart
                             local fakeRootPart = Instance.new("Part")
                             fakeRootPart.Transparency = 1
-                            fakeRootPart.CFrame = character.HumanoidRootPart.CFrame
-                            fakeRootPart.Size = character.HumanoidRootPart.Size
+                            fakeRootPart.CFrame = rhrp.CFrame
+                            fakeRootPart.Size = rhrp.Size
                             fakeRootPart.Parent = character
+                            rhrp.Anchored = true
                             task.wait()
-                            character.HumanoidRootPart.Anchored = true
-                            character.HumanoidRootPart.RootJoint.Part0 = fakeRootPart
-                            character.HumanoidRootPart.RootJoint.Part1 = character.Torso
-                            character.HumanoidRootPart.RootJoint.C0 = CFrame.identity
-                            character.HumanoidRootPart.RootJoint.C1 = CFrame.identity
+                            rhrp.RootJoint.Enabled = false
                             disabled = false
                             privateMaid:GiveTask(function()
                                 disabled = true
-                                character.HumanoidRootPart.Anchored = false
-                                character.HumanoidRootPart.CFrame = fakeRootPart.CFrame
-                                character.HumanoidRootPart.RootJoint.Part0 = character.HumanoidRootPart.RootJoint
-                                character.HumanoidRootPart.RootJoint.Part1 = character.Torso
-                                character.HumanoidRootPart.RootJoint.C0 = CFrame.identity
-                                character.HumanoidRootPart.RootJoint.C1 = CFrame.identity
+                                rhrp.Anchored = false
+                                rhrp.CFrame = fakeRootPart.CFrame
                                 task.wait()
+                                rhrp.RootJoint.Enabled = true
                                 fakeRootPart:Destroy()
                                 disabled = false
                             end)
