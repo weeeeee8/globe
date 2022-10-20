@@ -94,37 +94,7 @@ return {
                     if not disabled then
                         local character = Players.LocalPlayer.Character
                         enabled = not enabled
-                        if not enabled then
-                            privateMaid:DoCleaning()
-                        else
-                            disabled = true
-                            local rhrp = character.HumanoidRootPart
-                            rhrp.Name = "RealRootPart"
-                            local fakeRootPart = Instance.new("Part")
-                            fakeRootPart.Transparency = 1
-                            fakeRootPart.CFrame = rhrp.CFrame
-                            fakeRootPart.Size = rhrp.Size
-                            fakeRootPart.Name = "HumanoidRootPart"
-                            fakeRootPart.Parent = character
-                            local fakeJoint = Instance.new("Motor6D")
-                            fakeJoint.C0 = fakeRootPart
-                            fakeJoint.C1 = character.Torso
-                            fakeJoint.Parent = fakeRootPart
-                            rhrp.Anchored = true
-                            task.wait()
-                            rhrp.RootJoint.Enabled = false
-                            disabled = false
-                            privateMaid:GiveTask(function()
-                                disabled = true
-                                rhrp.Name = "HumanoidRootPart"
-                                rhrp.Anchored = false
-                                rhrp.CFrame = fakeRootPart.CFrame
-                                task.wait()
-                                rhrp.RootJoint.Enabled = true
-                                fakeRootPart:Destroy()
-                                disabled = false
-                            end)
-                        end
+                        settings().NetworkSettings.IncomingReplicationLag = enabled and 1000 or 0
                     end
                 end,
             }
