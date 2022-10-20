@@ -94,7 +94,7 @@ return {
                             elseif SpellName == "Splitting Slime" or SpellName == "Illusive Atake" then
                                 fakeArgs[3] =  if isMouseOverriden or mouse.Target then CFrame.new(mouse.Hit.Position) else realArgs[3]
                             elseif SpellName == "Blaze Column" then
-                                fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.new(mouse.Hit.Position) * CFrame.new(0, 2, 0) * CFrame.Angles(math.pi / 2, math.pi / 2, 0) else realArgs[3]
+                                fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.new(mouse.Hit.Position) * CFrame.Angles(math.pi / 2, math.pi / 2, 0) else realArgs[3]
                             elseif SpellName == "Water Beam" then
                                 fakeArgs[3] = {}
                                 fakeArgs[3].Origin = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
