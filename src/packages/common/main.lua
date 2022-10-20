@@ -77,8 +77,14 @@ return {
 
         local function buildLagSwitchSection()
             local enabled = false
+            local disabled = false
 
             local realCharacter
+            local function fixcam()
+                workspace.CurrentCamera.CameraType = Enum.CameraType.Scriptable
+                task.wait(0.02)
+                workspace.CurrentCamera.CameraType = Enum.CameraType.Custom
+            end
             local function onCharacterAdded(char)
                 realCharacter = char
                 realCharacter.Archivable = true 
@@ -99,26 +105,31 @@ return {
 
             section:Keybind{
                 Text = "Simulate Lagswitch",
-                Default = Enum.KeyCode.N,
+                Default = Enum.KeyCode.T,
                 Callback = function()
-                    enabled = not enabled
-                    if not enabled then
-                        privateMaid:DoCleaning()
-                    else
-                        local fakeChar = realCharacter:Clone()
-                        local character = realCharacter
-                        realCharacter.HumanoidRootPart.Anchored = true
-                        print(fakeChar.Humanoid)
-                        fakeChar.Parent = workspace
-                        Players.LocalPlayer.Character = fakeChar
-                        privateMaid:GiveTask(function()
-                            character.HumanoidRootPart.Anchored = false
-                            print(character.Humanoid)
-                            character:PivotTo(fakeChar:GetPivot())
-                            Players.LocalPlayer.Character = character
-                            task.wait(0.02)
-                            fakeChar:Destroy()
-                        end)
+                    if not disabled then
+                        enabled = not enabled
+                        if not enabled then
+                            privateMaid:DoCleaning()
+                        else
+                            disabled = true
+                            local fakeChar = realCharacter:Clone()
+                            local character = realCharacter
+                            realCharacter.HumanoidRootPart.Anchored = true
+                            fakeChar.Parent = workspace
+                            Players.LocalPlayer.Character = fakeChar
+                            fixcam()
+                            disabled = false
+                            privateMaid:GiveTask(function()
+                                character.HumanoidRootPart.Anchored = false
+                                character:PivotTo(fakeChar:GetPivot())
+                                Players.LocalPlayer.Character = character
+                                disabled = true
+                                fixcam()
+                                disabled = false
+                                fakeChar:Destroy()
+                            end)
+                        end
                     end
                 end,
             }
