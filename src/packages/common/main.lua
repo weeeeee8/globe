@@ -175,6 +175,7 @@ return {
         buildTeleportSection()
         buildRejoiningSection()
         buildLagSwitchSection()
+        buildCamSpySection()
         tab:Select()
     end
 }
