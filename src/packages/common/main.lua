@@ -96,6 +96,7 @@ return {
             }
 
             TextChatService.OnIncomingMessage = function(props: TextChatMessageProperties)
+                print(props.Text)
                 if checkcaller() then
                     if enabled then
                         local p = {}

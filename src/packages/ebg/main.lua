@@ -554,7 +554,8 @@ return {
                         local foundForceFied = targetChar:FindFirstChildOfClass("ForceField")
                         if foundForceFied then cleanPoints() return end
                         local hrp = targetChar:FindFirstChild("HumanoidRootPart")
-                        if hrp then
+                        local flipsHolder = targetChar:FindFirstChild("FlipsHolder")
+                        if hrp and flipsHolder then
                             if autoPredictIndex then
                                 falsePredictionIndex = math.clamp(math.floor((hrp.Position - rhrp.Position).Magnitude / 10 + 0.5), 1, NUMS_OF_PREDICTIONS)
                             end
@@ -568,7 +569,7 @@ return {
                                 local Point: Part = newPoint(i, PREDICTION_INDEX)
                                 local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
                                 local p
-                                if hrp:FindFirstChildOfClass("BodyPosition") or hrp:FindFirstChildOfClass("BodyForce") or hrp:FindFirstChildOfClass("BodyVelocity") then
+                                if flipsHolder:FindFirstChildOfClass("BodyPosition") or flipsHolder:FindFirstChildOfClass("BodyForce") then
                                     p = hrp.Position
                                 else
                                     p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
