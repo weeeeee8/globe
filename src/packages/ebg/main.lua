@@ -555,7 +555,7 @@ return {
                         if foundForceFied then cleanPoints() return end
                         local hrp = targetChar:FindFirstChild("HumanoidRootPart")
                         local flipsHolder = targetChar:FindFirstChild("FlipsHolder")
-                        print(flipsHolder ~= nil)
+                        print(flipsHolder ~= nil, flipsHolder)
                         if hrp then
                             if autoPredictIndex then
                                 falsePredictionIndex = math.clamp(math.floor((hrp.Position - rhrp.Position).Magnitude / 10 + 0.5), 1, NUMS_OF_PREDICTIONS)
