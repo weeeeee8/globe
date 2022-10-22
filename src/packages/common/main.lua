@@ -49,19 +49,19 @@ return {
             }
 
             teleportSection:Keybind{
-                Text = "Toggle Mouse Teleport",
+                Text = "Teleport to mouse",
                 Default = Enum.KeyCode.T,
                 Callback = TeleportAPI.ToggleMouseTeleport
             }
 
             teleportSection:Keybind{
-                Text = "Toggle Player Teleport",
+                Text = "Teleport to player",
                 Default = Enum.KeyCode.G,
                 Callback = TeleportAPI.TogglePlayerTeleport
             }
 
             teleportSection:Keybind{
-                Text = "Toggle Stick to",
+                Text = "Stick to player",
                 Default = Enum.KeyCode.H,
                 Callback = TeleportAPI.ToggleStickTo
             }
