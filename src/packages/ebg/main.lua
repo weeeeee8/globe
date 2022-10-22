@@ -569,7 +569,7 @@ return {
                                 local Point: Part = newPoint(i, PREDICTION_INDEX)
                                 local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
                                 local p
-                                if flipsHolder and flipsHolder:FindFirstChildOfClass("BodyPosition") or flipsHolder:FindFirstChildOfClass("BodyForce") then
+                                if flipsHolder ~= nil and flipsHolder:FindFirstChildOfClass("BodyPosition") or flipsHolder:FindFirstChildOfClass("BodyForce") then
                                     p = hrp.Position
                                 else
                                     p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
