@@ -229,7 +229,7 @@ return {
         buildRejoiningSection()
         buildLagSwitchSection()
         buildCamSpySection()
-        buildChatSpySection()
+        --buildChatSpySection()
         tab:Select()
     end
 }
