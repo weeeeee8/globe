@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
 local TeleportService = game:GetService("TeleportService")
 
 local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
@@ -75,6 +76,45 @@ return {
             }
         end
 
+        local function buildChatSpySection()
+            local defaultProps = {
+                Color = Color3.fromRGB(221, 221, 221); 
+                Font = Enum.Font.SourceSansBold;
+                TextSize = 18;
+            }
+
+            local enabled = false
+
+            oh.Maid:GiveTask(function()
+                enabled = false
+            end)
+
+            local TextChatService = game:GetService("TextChatService")
+
+            local section = tab:Section{
+                Text = "Chat Spy",
+            }
+
+            local old; old = hookfunction(TextChatService.OnIncomingMessage, function(props: TextChatMessageProperties)
+                if checkcaller() then
+                    if enabled then
+                        local p = {}
+                        for k, v in pairs(defaultProps) do p[k] = v end
+                        p.Text = props.Text
+					    StarterGui:SetCore("ChatMakeSystemMessage",p)
+                    end
+                end
+                return old(props)
+            end)
+
+            section:Toggle{
+                Text = "Toggle chat spy",
+                Callback = function(toggled)
+                    enabled = true
+                end
+            }
+        end
+
         local function buildCamSpySection()
             local function getHumOf(char)
                 return char:FindFirstChildOfClass("Humanoid")
@@ -92,6 +132,7 @@ return {
 
             oh.Maid:GiveTask(function()
                 targetPlayer = nil
+                enabled = false
                 setCamSubjectByChar(Players.LocalPlayer.Character)
             end)
 
@@ -188,6 +229,7 @@ return {
         buildRejoiningSection()
         buildLagSwitchSection()
         buildCamSpySection()
+        buildChatSpySection()
         tab:Select()
     end
 }
