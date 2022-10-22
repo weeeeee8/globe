@@ -75,6 +75,62 @@ return {
             }
         end
 
+        local function buildCamSpySection()
+            local function getHumOf(char)
+                return char:FindFirstChildOfClass("Humanoid")
+            end
+
+            local function setCamSubjectByChar(char)
+                local hum = getHumOf(char)
+            end
+
+            local enabled = false
+
+            local section = tab:Section{
+                Text = "Player Spy", Side = "Right"
+            }
+
+            local label = section:Label{
+                Text = "Current target: None",
+                Color = oh.Constants.StateColors.Invalid
+            }
+            
+            section:Toggle{
+                Text = "Toggle camera spy",
+                Callback = function(toggled)
+                    enabled = toggled
+                    if not toggled then
+                        setCamSubjectByChar(Players.LocalPlayer.Character)
+                    end
+                end
+            }
+
+            section:Input{
+                Text = "Set Target Player",
+                Placeholder = "Player DisplayName / Name",
+                Callback = function(txt)
+                    if #txt <= 0 then return end
+                    local player
+                    for _, plr in ipairs(Players:GetPlayers()) do
+                        if plr == Players.LocalPlayer then continue end
+                        if plr.DisplayName:find(txt, 1) or plr.Name:find(txt, 1) then
+                            player = plr
+                            break
+                        end
+                    end
+                    
+                    label:Set{
+                        Text = "Current target: " .. if player ~= nil then tostring(player.Name) else "None",
+                        Color = if player ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
+                    }
+
+                    if enabled then
+                        setCamSubjectByChar(player.Character)
+                    end
+                end
+            }
+        end
+
         local function buildLagSwitchSection()
             local enabled = false
             local disabled = false
@@ -92,7 +148,6 @@ return {
                 Default = Enum.KeyCode.V,
                 Callback = function()
                     if not disabled then
-                        local character = Players.LocalPlayer.Character
                         enabled = not enabled
                         settings().Network.IncomingReplicationLag = enabled and 1000 or 0
                     end

@@ -56,7 +56,7 @@ return {
         shouldStickTo = not shouldStickTo
     end,
 
-    SetTargetPlayer = function(txt: string, labelComponent)
+    SetTargetPlayer = function(txt: string?, labelComponent)
         if #txt <= 0 then return end
         local player
         for _, plr in ipairs(Players:GetPlayers()) do
