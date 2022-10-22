@@ -95,7 +95,7 @@ return {
                 Text = "Chat Spy",
             }
 
-            local old; old = hookfunction(TextChatService.OnIncomingMessage, function(props: TextChatMessageProperties)
+            TextChatService.OnIncomingMessage = function(props: TextChatMessageProperties)
                 if checkcaller() then
                     if enabled then
                         local p = {}
@@ -104,8 +104,7 @@ return {
 					    StarterGui:SetCore("ChatMakeSystemMessage",p)
                     end
                 end
-                return old(props)
-            end)
+            end
 
             section:Toggle{
                 Text = "Toggle chat spy",
