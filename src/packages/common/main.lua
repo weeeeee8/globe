@@ -82,9 +82,18 @@ return {
 
             local function setCamSubjectByChar(char)
                 local hum = getHumOf(char)
+                if hum then
+                    workspace.CurrentCamera.CameraSubject = hum
+                end
             end
 
+            local targetPlayer
             local enabled = false
+
+            oh.Maid:GiveTask(function()
+                targetPlayer = nil
+                setCamSubjectByChar(Players.LocalPlayer.Character)
+            end)
 
             local section = tab:Section{
                 Text = "Player Spy", Side = "Right"
@@ -101,6 +110,8 @@ return {
                     enabled = toggled
                     if not toggled then
                         setCamSubjectByChar(Players.LocalPlayer.Character)
+                    else
+                        setCamSubjectByChar(targetPlayer.Character)
                     end
                 end
             }
@@ -124,6 +135,7 @@ return {
                         Color = if player ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
                     }
 
+                    targetPlayer = player
                     if enabled then
                         setCamSubjectByChar(player.Character)
                     end
