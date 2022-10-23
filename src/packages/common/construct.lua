@@ -55,13 +55,14 @@ function construct.newTool()
     self.states.objectSpace = Subscription.new("world", self.maid)
 
     self.maid:GiveTask(Players.LocalPlayer.Chatted:Connect(function(msg: string?)
-        if #msg > 0 then return end
-        if msg:lower() == self.prefix then
+        if #msg <= 0 then return end
+        if msg:sub(1, 2):lower() == "/w" then msg = msg:sub(4, #msg) end
+        if msg:lower():sub(1, #self.prefix) == self.prefix then
             if not self.active then return end
             local part = Instance.new("Part")
             part.Name = "clientpart#"..tostring(self.partindex)
             self.partindex+=1
-            part.CFrame = CFrame.new(getMouseWorldPosition())
+            part.CFrame = CFrame.new(getMouseWorldPosition() + Vector3.new(0, 1, 0))
             part.Anchored = true
             part.Parent = workspace
 
