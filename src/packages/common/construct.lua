@@ -135,8 +135,20 @@ function construct:select(part)
                 part.CFrame = originalCFrame:ToWorldSpace(CFrame.new(Vector3.fromNormalId(face) * snap(dist, self.moveScale)))
             end
         else
-            part.Size = originalSize + Vector3.fromNormalId(face) * snap(dist, self.sizeScale)
-            part.CFrame = originalCFrame:ToWorldSpace(CFrame.new(Vector3.fromNormalId(face) * snap(dist, self.moveScale)))
+            local fixedFace = Vector3.fromNormalId(face)
+            fixedFace = Vector3.new(
+                math.abs(fixedFace.X),
+                math.abs(fixedFace.Y),
+                math.abs(fixedFace.Z)
+            )
+            local goalSize = originalSize + fixedFace * snap(dist, self.sizeScale)
+            goalSize = Vector3.new(
+                math.max(goalSize.X, 0.001),
+                math.max(goalSize.Y, 0.001),
+                math.max(goalSize.Z, 0.001)
+            )
+            part.Size = goalSize
+            part.CFrame = originalCFrame:ToWorldSpace(CFrame.new(Vector3.fromNormalId(face) * snap(dist, self.moveScale) / 2))
         end
     end))
     self.simulationMaid:GiveTask(handles.MouseButton1Down:Connect(function(face)
