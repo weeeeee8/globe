@@ -125,8 +125,14 @@ function construct:select(part)
         handles.Style = if handleType == "move" then Enum.HandlesStyle.Movement else Enum.HandlesStyle.Resize
     end))
 
-    local lastSizeVector, lastPosVector = part.Size, part.Position
+    local lastSizeVector, lastPosVector, lastDistByFace = part.Size, part.Position, {}
     self.simulationMaid:GiveTask(handles.MouseDrag:Connect(function(face, dist)
+        if not lastDistByFace[face] then
+            lastDistByFace[face] = 0
+        end
+
+        dist = dist - lastDistByFace[face]
+
         if self.states.handleType:get() == "move" then
             local vector = Vector3.fromNormalId(face) * snap(dist * 0.5, self.moveScale)
 
@@ -149,6 +155,9 @@ function construct:select(part)
         end
     end))
     self.simulationMaid:GiveTask(handles)
+    self.simulationMaid:GiveTask(function()
+        table.clear(lastDistByFace)
+    end)
 
     self.activelySimulating = true
 end
