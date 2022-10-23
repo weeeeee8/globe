@@ -79,8 +79,9 @@ function construct.newTool()
                 if part then
                     if self.activelySimulating then
                         self:deselect()
+                    else
+                        self:select(part)
                     end
-                    self:select(part)
                 end
             end
         end
@@ -121,12 +122,25 @@ function construct:select(part)
     self.simulationMaid:GiveTask(self.states.handleType:subscribe(function(handleType)
         handles.Style = if handleType == "move" then Enum.HandlesStyle.Movement else Enum.HandlesStyle.Resize
     end))
+
+    local lastSizeVector, lastPosVector = part.Size, part.Position
     self.simulationMaid:GiveTask(handles.MouseDrag:Connect(function(face, dist)
-        local vector = Vector3.fromNormalId(face)
-        vector *= snap(dist, self.moveScale)
-        part.Size = vector
+        if self.states.handleType:get() == "move" then
+            local vector = Vector3.fromNormalId(face) * snap(dist, self.moveScale) + part.Position
+            if lastPosVector ~= vector then
+                part.Position = vector
+                lastPosVector = vector
+            end
+        else
+            local vector = Vector3.fromNormalId(face) * snap(dist, self.sizeScale) + part.Size
+            if lastSizeVector ~= vector then
+                part.Size = vector
+                lastSizeVector = vector
+            end
+        end
     end))
     self.simulationMaid:GiveTask(handles)
+    
     self.activelySimulating = true
 end
 
