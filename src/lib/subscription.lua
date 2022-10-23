@@ -8,7 +8,7 @@ function Subscription.new(v, maid)
         _v = v,
         _changed = Signal.new(),
         value = v
-    })
+    }, Subscription)
 
     if maid then
         maid:GiveTask(self._changed)
