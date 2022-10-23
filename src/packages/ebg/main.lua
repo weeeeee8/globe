@@ -122,7 +122,7 @@ return {
                                     end
                                 end
                             end
-                            warn(unpack(fakeArgs), unpack(realArgs))
+                            warn(unpack(fakeArgs), unpack(unpack(realArgs)))
                             return oldSpoof(self, unpack(fakeArgs))
                         end
                     end
