@@ -31,6 +31,30 @@ return {
                     construct:Enable(toggled)
                 end
             }
+
+            section:Input{
+                Text = "Set Space Type",
+                Placeholder = "World / Object",
+                Callback = function(txt)
+                    if #txt <= 0 then return end
+                    txt = txt:lower()
+                    if txt == "world" or txt == "object" then
+                        construct.states.objectSpace:set(txt)
+                    end
+                end
+            }
+            
+            section:Input{
+                Text = "Set Handle Type",
+                Placeholder = "Move / Scale",
+                Callback = function(txt)
+                    if #txt <= 0 then return end
+                    txt = txt:lower()
+                    if txt == "move" or txt == "scale" then
+                        construct.states.handleType:set(txt)
+                    end
+                end
+            }
         end
 
         local function buildFlySection()
