@@ -12,9 +12,27 @@ FlyAPI.Start()
 local TeleportAPI = import('packages/common/teleport')
 TeleportAPI.Start()
 
+local ConstructAPI = import('packages/common/construct')
+
 return {
     init = function(windw)
         local tab = windw:Tab{Text = "Common"}
+        local function buildConstructSection()
+            local construct = ConstructAPI.newTool()
+            oh.Maid:GiveTask(construct)
+
+            local section = tab:Section{
+                Text = "Construct API"
+            }
+
+            section:Toggle{
+                Text = "Enable construct",
+                Callback = function(toggled)
+                    construct:Enable(toggled)
+                end
+            }
+        end
+
         local function buildFlySection()
             local flySection = tab:Section{
                 Text = "Fly"

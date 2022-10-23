@@ -61,7 +61,7 @@ return {
         local player
         for _, plr in ipairs(Players:GetPlayers()) do
             if plr == Players.LocalPlayer then continue end
-            if plr.DisplayName:find(txt, 1) or plr.Name:find(txt, 1) then
+            if plr.DisplayName:sub(1, #txt) == txt or plr.Name:sub(1, #txt) == txt then
                 player = plr
                 break
             end
