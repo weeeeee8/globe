@@ -111,6 +111,7 @@ return {
                                         fixedArgs[3] = {}
                                         fixedArgs[3].Origin = realArgs[3].Origin
                                         fixedArgs[3].Direction = (getMouseWorldPosition() - hrp.Position).Unit * 25
+                                        print(fixedArgs[3].Direction, realArgs[3].Direction)
                                     end
                                 end
                             elseif SpellName == "Rainbow Dash" then
@@ -303,6 +304,7 @@ return {
             local MINDIST = 200
 
             local pointsFolder = workspace:FindFirstChild(".points") or Instance.new("Folder", workspace)
+            pointsFolder.Name = ".points"
             pointsFolder.Parent = workspace
 
             local targetPlayer
