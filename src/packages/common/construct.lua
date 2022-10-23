@@ -98,6 +98,7 @@ end
 
 function construct:deselect()
     self.simulationMaid:DoCleaning()
+    self.activelySimulating = false
 end
 
 function construct:select(part)
@@ -116,6 +117,7 @@ function construct:select(part)
     handles.Faces = ALL_FACES
     handles.Style = Enum.HandlesStyle.Movement
     handles.Adornee = part
+    handles.Parent = CoreGui
     self.simulationMaid:GiveTask(self.states.handleType:subscribe(function(handleType)
         handles.Style = if handleType == "move" then Enum.HandlesStyle.Movement else Enum.HandlesStyle.Resize
     end))
@@ -125,6 +127,7 @@ function construct:select(part)
         part.Size = vector
     end))
     self.simulationMaid:GiveTask(handles)
+    self.activelySimulating = true
 end
 
 function construct:Destroy()

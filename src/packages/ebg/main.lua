@@ -297,7 +297,7 @@ return {
         end
 
         local function buildAutotargetSection()
-            local NUMS_OF_PREDICTIONS = 10
+            local NUMS_OF_PREDICTIONS = 16
             local FIXED_TIME_SCALE = 1
             local PREDICTION_INDEX = 5
             local MINDIST = 200
