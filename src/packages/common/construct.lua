@@ -28,7 +28,7 @@ local function getMouseHit()
 end
 
 local function snap(n, snapFactor)
-    return math.clamp(math.floor(n / snapFactor) * snapFactor, 0, math.huge)
+    return math.clamp(math.floor(n / snapFactor) * snapFactor, -math.huge, math.huge)
 end
 
 local construct = {}
@@ -52,6 +52,7 @@ function construct.newTool()
 
     self.maid:GiveTask(self.simulationMaid)
     self.states.handleType = Subscription.new("move", self.maid)
+    self.states.objectSpace = Subscription.new("world", self.maid)
 
     self.maid:GiveTask(Players.LocalPlayer.Chatted:Connect(function(msg: string?)
         if #msg > 0 then return end
@@ -126,13 +127,20 @@ function construct:select(part)
     local lastSizeVector, lastPosVector = part.Size, part.Position
     self.simulationMaid:GiveTask(handles.MouseDrag:Connect(function(face, dist)
         if self.states.handleType:get() == "move" then
-            local vector = Vector3.fromNormalId(face) * snap(dist, self.moveScale) + part.Position
+            local vector = Vector3.fromNormalId(face) * snap(dist * 0.5, self.moveScale)
+
+            if self.states.objectSpace:get() == "world" then
+                vector = vector + part.Position
+            else
+                vector = part.CFrame:ToWorldSpace(vector)
+            end
+
             if lastPosVector ~= vector then
                 part.Position = vector
                 lastPosVector = vector
             end
         else
-            local vector = Vector3.fromNormalId(face) * snap(dist, self.sizeScale) + part.Size
+            local vector = Vector3.fromNormalId(face) * snap(dist * 0.5, self.sizeScale) + part.Size
             if lastSizeVector ~= vector then
                 part.Size = vector
                 lastSizeVector = vector
@@ -140,7 +148,7 @@ function construct:select(part)
         end
     end))
     self.simulationMaid:GiveTask(handles)
-    
+
     self.activelySimulating = true
 end
 
