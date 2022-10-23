@@ -103,26 +103,27 @@ return {
                             end
                             return oldSpoof(self, unpack(fakeArgs))
                         else
-                            local fixedArgs = {unpack(realArgs)}
+                            local fakeArgs = {unpack(realArgs)}
                             if SpellName == "Lightning Flash" then
                                 if isMouseOverriden then
                                     local hrp = Players.LocalPlayer.Character.FindFirstChild(Players.LocalPlayer.Character, "HumanoidRootPart")
                                     if hrp then
-                                        fixedArgs[3] = {}
-                                        fixedArgs[3].Origin = hrp.Position
-                                        fixedArgs[3].Direction = hrp.Position + ((getMouseWorldPosition() - hrp.Position).Unit * 25)
+                                        fakeArgs[3] = {}
+                                        fakeArgs[3].Origin = hrp.Position
+                                        fakeArgs[3].Direction = hrp.Position + ((getMouseWorldPosition() - hrp.Position).Unit * 25)
                                     end
                                 end
                             elseif SpellName == "Rainbow Dash" then
                                 if isMouseOverriden then
                                     local hrp = Players.LocalPlayer.Character.FindFirstChild(Players.LocalPlayer.Character, "HumanoidRootPart")
                                     if hrp then
-                                        fixedArgs[3] = {}
-                                        fixedArgs[3].Dir = CFrame.lookAt(hrp, getMouseWorldPosition())
+                                        fakeArgs[3] = {}
+                                        fakeArgs[3].Dir = CFrame.lookAt(hrp, getMouseWorldPosition())
                                     end
                                 end
                             end
-                            return oldSpoof(self, unpack(fixedArgs))
+                            warn(unpack(fakeArgs), unpack(realArgs))
+                            return oldSpoof(self, unpack(fakeArgs))
                         end
                     end
                 end
