@@ -110,7 +110,7 @@ return {
                                     if hrp then
                                         fakeArgs[3] = {}
                                         fakeArgs[3].Origin = hrp.Position
-                                        fakeArgs[3].End = hrp.Position + ((getMouseWorldPosition() - hrp.Position).Unit * 25)
+                                        fakeArgs[3].End = hrp.Position + ((getMouseWorldPosition() - hrp.Position).Unit * 50)
                                     end
                                 end
                             elseif SpellName == "Rainbow Dash" then
