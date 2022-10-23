@@ -28,7 +28,7 @@ local function getMouseHit()
 end
 
 local function snap(n, snapFactor)
-    return math.clamp(math.floor(n / snapFactor) * snapFactor, -snapFactor, snapFactor)
+    return math.floor(n / snapFactor) * snapFactor
 end
 
 local construct = {}
@@ -43,8 +43,8 @@ function construct.newTool()
         active = false,
         activelySimulating = false,
 
-        moveScale = 1,--per stud
-        sizeScale = 1,--per stud
+        moveScale = 5,--per stud
+        sizeScale = 5,--per stud
         rotationScale = 45,--to be converted to radians
 
         states = {},
@@ -125,28 +125,29 @@ function construct:select(part)
         handles.Style = if handleType == "move" then Enum.HandlesStyle.Movement else Enum.HandlesStyle.Resize
     end))
 
-    local lastSizeVector, lastPosVector = part.Size, part.Position
+    local originalSize = part.Size
+    local originalCFrame = part.CFrame
     self.simulationMaid:GiveTask(handles.MouseDrag:Connect(function(face, dist)
         if self.states.handleType:get() == "move" then
-            local vector = Vector3.fromNormalId(face) * snap(dist, self.moveScale)
-
             if self.states.objectSpace:get() == "world" then
-                vector = part.CFrame:PointToWorldSpace(vector)
+                part.Position = originalCFrame.Position + Vector3.fromNormalId(face) * snap(dist, self.moveScale)
             else
-                vector = part.CFrame:PointToObjectSpace(vector)
-            end
-
-            if lastPosVector ~= vector then
-                part.Position = vector
-                lastPosVector = vector
+                part.CFrame = originalCFrame:ToWorldSpace(CFrame.new(Vector3.fromNormalId(face) * snap(dist, self.moveScale)))
             end
         else
-            local vector = Vector3.fromNormalId(face) * snap(dist, self.sizeScale) + part.Size
-            if lastSizeVector ~= vector then
-                part.Size = vector
-                lastSizeVector = vector
-            end
+            part.Size = originalSize + Vector3.fromNormalId(face) * snap(dist, self.sizeScale)
+            part.CFrame = originalCFrame:ToWorldSpace(CFrame.new(Vector3.fromNormalId(face) * snap(dist, self.moveScale)))
         end
+    end))
+    self.simulationMaid:GiveTask(handles.MouseButton1Down:Connect(function(face)
+        originalCFrame = part.CFrame
+        originalSize = part.Size
+        handles.Faces = Faces.new(face)
+    end))
+    self.simulationMaid:GiveTask(handles.MouseButton1Up:Connect(function()
+        originalCFrame = part.CFrame
+        originalSize = part.Size
+        handles.Faces = ALL_FACES
     end))
     self.simulationMaid:GiveTask(handles)
 
