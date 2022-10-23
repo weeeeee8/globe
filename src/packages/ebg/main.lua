@@ -113,6 +113,14 @@ return {
                                         fixedArgs[3].Direction = (getMouseWorldPosition() - hrp.Position).Unit * 25
                                     end
                                 end
+                            elseif SpellName == "Rainbow Dash" then
+                                if isMouseOverriden then
+                                    local hrp = Players.LocalPlayer.Character.FindFirstChild(Players.LocalPlayer.Character, "HumanoidRootPart")
+                                    if hrp then
+                                        fixedArgs[3] = {}
+                                        fixedArgs[3].Dir = CFrame.lookAt(hrp, getMouseWorldPosition())
+                                    end
+                                end
                             end
                             return oldSpoof(self, unpack(fixedArgs))
                         end
