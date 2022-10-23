@@ -102,6 +102,18 @@ return {
                                 fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0)) else realArgs[3]
                             end
                             return oldSpoof(self, unpack(fakeArgs))
+                        else
+                            local fixedArgs = {unpack(realArgs)}
+                            if SpellName == "Lightning Flash" then
+                                if isMouseOverriden then
+                                    local hrp = Players.LocalPlayer.Character.FindFirstChild(Players.LocalPlayer.Character, "HumanoidRootPart")
+                                    if hrp then
+                                        fixedArgs[3] = {}
+                                        fixedArgs[3].Direction = (getMouseWorldPosition() - hrp.Position).Unit * 25
+                                    end
+                                end
+                            end
+                            return oldSpoof(self, unpack(fixedArgs))
                         end
                     end
                 end
