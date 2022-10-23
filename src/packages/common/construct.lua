@@ -130,9 +130,9 @@ function construct:select(part)
             local vector = Vector3.fromNormalId(face) * snap(dist * 0.5, self.moveScale)
 
             if self.states.objectSpace:get() == "world" then
-                vector = vector + part.Position
+                vector = part.CFrame:PointToWorldSpace(vector)
             else
-                vector = part.CFrame:ToWorldSpace(vector)
+                vector = part.CFrame:PointToObjectSpace(vector)
             end
 
             if lastPosVector ~= vector then
