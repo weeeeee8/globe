@@ -128,7 +128,7 @@ function construct:select(part)
     local lastSizeVector, lastPosVector = part.Size, part.Position
     self.simulationMaid:GiveTask(handles.MouseDrag:Connect(function(face, dist)
         if self.states.handleType:get() == "move" then
-            local vector = Vector3.fromNormalId(face) * snap(dist * 0.5, self.moveScale)
+            local vector = Vector3.fromNormalId(face) * snap(dist, self.moveScale)
 
             if self.states.objectSpace:get() == "world" then
                 vector = part.CFrame:PointToWorldSpace(vector)
@@ -141,7 +141,7 @@ function construct:select(part)
                 lastPosVector = vector
             end
         else
-            local vector = Vector3.fromNormalId(face) * snap(dist * 0.5, self.sizeScale) + part.Size
+            local vector = Vector3.fromNormalId(face) * snap(dist, self.sizeScale) + part.Size
             if lastSizeVector ~= vector then
                 part.Size = vector
                 lastSizeVector = vector
