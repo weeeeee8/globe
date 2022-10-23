@@ -109,6 +109,7 @@ return {
                                     local hrp = Players.LocalPlayer.Character.FindFirstChild(Players.LocalPlayer.Character, "HumanoidRootPart")
                                     if hrp then
                                         fixedArgs[3] = {}
+                                        fixedArgs[3].Origin = realArgs[3].Origin
                                         fixedArgs[3].Direction = (getMouseWorldPosition() - hrp.Position).Unit * 25
                                     end
                                 end
