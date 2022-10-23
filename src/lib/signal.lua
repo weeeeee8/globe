@@ -20,7 +20,7 @@
 
 --]]
 
-local Promise = Import('lib/Promise')
+local Promise = import('lib/Promise')
 
 local Connection = {}
 Connection.__index = Connection

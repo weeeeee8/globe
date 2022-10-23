@@ -247,6 +247,7 @@ return {
         buildRejoiningSection()
         buildLagSwitchSection()
         buildCamSpySection()
+        buildConstructSection()
         --buildChatSpySection()
         tab:Select()
     end
