@@ -744,6 +744,9 @@ return {
             }
         end
 
+        local function buildAntiStaggerSection()
+        end
+
         buildTechDiskSection()
         buildSpellSpoofSection()
         buildAutotargetSection()

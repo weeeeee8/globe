@@ -56,7 +56,7 @@ function construct.newTool()
 
     self.maid:GiveTask(Players.LocalPlayer.Chatted:Connect(function(msg: string?)
         if #msg <= 0 then return end
-        if msg:sub(1, 2):lower() == "/w" then msg = msg:sub(4, #msg) end
+        if msg:sub(1, 2):lower() == "/e" then msg = msg:sub(4, #msg) end
         if msg:lower():sub(1, #self.prefix) == self.prefix then
             if not self.active then return end
             local part = Instance.new("Part")
@@ -121,6 +121,7 @@ function construct:select(part)
     handles.Style = Enum.HandlesStyle.Movement
     handles.Adornee = part
     handles.Parent = CoreGui
+    handles.Style = if self.states.handleType:get() == "move" then Enum.HandlesStyle.Movement else Enum.HandlesStyle.Resize
     self.simulationMaid:GiveTask(self.states.handleType:subscribe(function(handleType)
         handles.Style = if handleType == "move" then Enum.HandlesStyle.Movement else Enum.HandlesStyle.Resize
     end))
