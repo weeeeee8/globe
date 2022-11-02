@@ -53,7 +53,7 @@ return {
             
                                     local foundFrame = pop_stack()
                                     if foundFrame then
-                                        data.frameScaleSize = foundFrame.Size.Y.Scale / 2 - noteAccuracy
+                                        data.frameSizeTime = (foundFrame.Size.Y.Scale * 0.75) - noteAccuracy
                                     end
                                     RUNNING_NOTES[data] = true
             
@@ -76,7 +76,9 @@ return {
                     if pos < (0 + noteAccuracy) then
                         coroutine.wrap(function()
                             keypress(data.keycode)
-                            task.wait(data.frameScaleSize or 1/60)
+                            if data.frameSizeTime then
+                                task.wait(data.frameSizeTime)
+                            end
                             keyrelease(data.keycode)
                         end)()
                         RUNNING_NOTES[data] = nil
