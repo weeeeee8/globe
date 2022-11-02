@@ -106,6 +106,22 @@ end
 
 function construct:select(part)
     if not part:IsA("BasePart") then return end
+    local tempPart = Instance.new("Part")
+    tempPart.Name = "Hitbox"
+    tempPart.CanCollide = false
+    tempPart.CanQuery = false
+    tempPart.CanTouch = false
+    tempPart.CastShadow = false
+    tempPart.Transparency = 1
+    tempPart.Anchored = true
+    tempPart.Size = part.Size
+    tempPart.CFrame = if self.states.objectSpace:get() == "world" then CFrame.new(part.Position) else part.CFrame
+    self.simulationMaid:GiveTask(self.states.objectSpace:subscribe(function(typ)
+        tempPart.CFrame = if typ == "world" then CFrame.new(part.Position) else part.CFrame
+    end))
+    tempPart.Parent = workspace.CurrentCamera
+    self.simulationMaid:GiveTask(tempPart)
+
     local selectionBox = Instance.new("SelectionBox")
     selectionBox.LineThickness = 0.5
     selectionBox.Color3 = Color3.fromRGB(0, 255, 255)
@@ -135,6 +151,8 @@ function construct:select(part)
             else
                 part.CFrame = originalCFrame:ToWorldSpace(CFrame.new(Vector3.fromNormalId(face) * snap(dist, self.moveScale)))
             end
+
+            tempPart.CFrame = if self.states.objectSpace:get() == "world" then CFrame.new(part.Position) else part.CFrame
         else
             local fixedFace = Vector3.fromNormalId(face)
             fixedFace = Vector3.new(
@@ -150,6 +168,9 @@ function construct:select(part)
             )
             part.Size = goalSize
             part.CFrame = originalCFrame:ToWorldSpace(CFrame.new(Vector3.fromNormalId(face) * snap(dist, self.moveScale) / 2))
+            
+            tempPart.Size = part.Size
+            tempPart.CFrame = if self.states.objectSpace:get() == "world" then CFrame.new(part.Position) else part.CFrame
         end
     end))
     self.simulationMaid:GiveTask(handles.MouseButton1Down:Connect(function(face)
