@@ -28,8 +28,7 @@ return {
                 ["3"] = 0x4C,
             }
 
-            local noteAccuracy = 0.05
-            local enabled = false
+            local noteAccuracy = 0.1
 
             local section = tab:Section{Text = "AutoHit Note Options"}
 
@@ -43,15 +42,14 @@ return {
                             if not frame:IsA("Frame") then continue end
                             local strIndex = tostring(frame.Name:sub(6, #frame.Name))
                             tempMaid:GiveTask(frame.InnerFrame.Column.ChildAdded:Connect(function(c)
-                                if not enabled then return end
                                 local name = c.Name:lower()
                                 if name == "frame" then
                                     push_stack(c)
                                 elseif name == "note" then
                                     local data = {
-                                    note = c,
-                                    keycode = KEYCODE_BY_INDEX[strIndex],
-                                    index = strIndex,
+                                        note = c,
+                                        keycode = KEYCODE_BY_INDEX[strIndex],
+                                        index = strIndex,
                                     }
             
                                     local foundFrame = pop_stack()
@@ -75,8 +73,7 @@ return {
             oh.Maid:GiveTask(RunService.RenderStepped:Connect(function(dt)
                 for data in pairs(RUNNING_NOTES) do
                     local pos = data.note.Position.Y.Scale
-                    local translateY = math.abs(pos)
-                    if (translateY > 0) and translateY < (0 + noteAccuracy) then
+                    if pos < (0 + noteAccuracy) then
                         coroutine.wrap(function()
                             keypress(data.keycode)
                             task.wait(data.frameScaleSize or 1/60)
