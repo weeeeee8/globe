@@ -168,9 +168,9 @@ function construct:select(part)
             )
             part.Size = goalSize
             part.CFrame = originalCFrame:ToWorldSpace(CFrame.new(Vector3.fromNormalId(face) * snap(dist, self.moveScale) / 2))
-            
+
             tempPart.Size = part.Size
-            tempPart.CFrame = if self.states.objectSpace:get() == "world" then CFrame.new(part.Position) else part.CFrame
+            tempPart.CFrame = part.CFrame
         end
     end))
     self.simulationMaid:GiveTask(handles.MouseButton1Down:Connect(function(face)
