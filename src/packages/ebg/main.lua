@@ -644,7 +644,7 @@ return {
 
             local targetPlayer = nil
             local voidPosition = Vector3.new(0, workspace.FallenPartsDestroyHeight + 3, 0)
-            local floatPosition = Vector3.one * 2147483646
+            local floatPosition = Vector3.new(10e5, 2^26, 10e5)
             local trolltype = "void"
             local spawnlocationsbyPlaceId = {
                 [2569625809]  = Vector3.new(-1100.52, 65.125, 282.28),
