@@ -53,7 +53,7 @@ return {
             
                                     local foundFrame = pop_stack()
                                     if foundFrame then
-                                        data.frameSizeTime = (foundFrame.Size.Y.Scale * 0.5) - noteAccuracy
+                                        data.frameSizeTime = (foundFrame.Size.Y.Scale * 0.65) - noteAccuracy
                                     end
                                     RUNNING_NOTES[data] = true
             
