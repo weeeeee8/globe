@@ -53,12 +53,14 @@ return {
             
                                     local foundFrame = pop_stack()
                                     if foundFrame then
-                                        data.frameSizeTime = (foundFrame.Size.Y.Scale * 0.75) - noteAccuracy
+                                        data.frameSizeTime = (foundFrame.Size.Y.Scale * 0.5) - noteAccuracy
                                     end
                                     RUNNING_NOTES[data] = true
             
                                     c.Destroying:Once(function()
-                                        keyrelease(data.keycode)
+                                        if not data.frameSizeTime then
+                                            keyrelease(data.keycode)
+                                        end
                                         RUNNING_NOTES[data] = nil
                                     end)
                                 end
