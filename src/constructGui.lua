@@ -3,7 +3,7 @@ local shaman = import('lib/shaman')
 
 local Packages = {
     [224422602] = 'packages/ebg/main',
-    --[] = 'packages/funkyfriday/main',
+    [240408094] = 'packages/funkyfriday/main',
 }
 
 local Windw = shaman:Window{

@@ -69,7 +69,7 @@ return {
             end
         end)
 
-        local tab = windw:Tab{Text = "EBG-Exploits"}
+        local tab = windw:Tab{Text = "Elemental Battlegrounds"}
         local function buildSpellSpoofSection()
             local remote = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
