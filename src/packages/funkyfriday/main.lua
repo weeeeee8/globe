@@ -28,8 +28,7 @@ return {
                 ["3"] = 0x4C,
             }
 
-            local noteAccuracy = 0.1
-
+            local noteAccuracy = 0.05
             local section = tab:Section{Text = "AutoHit Note Options"}
 
             section:Toggle{
@@ -54,11 +53,12 @@ return {
             
                                     local foundFrame = pop_stack()
                                     if foundFrame then
-                                        data.frameScaleSize = foundFrame.Size.Y.Scale
+                                        data.frameScaleSize = foundFrame.Size.Y.Scale / 2 - noteAccuracy
                                     end
                                     RUNNING_NOTES[data] = true
             
                                     c.Destroying:Once(function()
+                                        keyrelease(data.keycode)
                                         RUNNING_NOTES[data] = nil
                                     end)
                                 end
