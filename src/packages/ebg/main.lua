@@ -757,15 +757,19 @@ return {
 
         local function buildAntiStaggerSection()
             local set = makeSet("BodyPosition", "BodyForce")
+            local bodyparts = makeSet("Head", "FlipsHolder")
             local enabled = false
             local function onCharacterAdded(character)
-                local flipsHolder = character:WaitForChild("FlipsHolder")
-                flipsHolder.ChildAdded:Connect(function(c)
-                    if not enabled then return end
-                    if set[c.ClassName] then
-                        task.delay(0.07, c.Destroy, c)
-                    end
-                end)
+                character:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, false)
+                for _, v in ipairs(character:GetChildren()) do
+                    if not bodyparts[v.Name] then continue end
+                    v.ChildAdded:Connect(function(c)
+                        if not enabled then return end
+                        if set[c.ClassName] then
+                            task.delay(0.07, c.Destroy, c)
+                        end
+                    end)
+                end
             end
             oh.Maid:GiveTask(Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded))
             if Players.LocalPlayer.Character then onCharacterAdded(Players.LocalPlayer.Character) end
