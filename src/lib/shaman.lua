@@ -1004,6 +1004,8 @@ Info.Flag = Info.Flag or nil
 Info.Callback = Info.Callback or function() end
 Info.Tooltip = Info.Tooltip or ""
 
+local insideinput = {}
+
 local input = Instance.new("Frame")
 input.Name = "Input"
 input.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -1066,6 +1068,13 @@ inputTextBox.FocusLost:Connect(function()
 		end
     end)
 end)
+
+function insideinput:Set(input)
+    inputTextBox.Text = input
+    pcall(Info.Callback, inputTextBox.Text)
+end
+
+return insideinput
 end
 
 function sectiontable:Toggle(Info)

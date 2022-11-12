@@ -57,8 +57,15 @@ return {
     end,
 
     SetTargetPlayer = function(txt: string?, labelComponent)
-        if #txt <= 0 then return end
-        local player
+        if #txt <= 0 then
+            targetPlayer = nil
+            labelComponent:Set{
+                Text = "Current target: None",
+                Color = oh.Constants.StateColors.Invalid
+            }
+            return
+        end
+        local player = nil
         for _, plr in ipairs(Players:GetPlayers()) do
             if plr == Players.LocalPlayer then continue end
             if plr.DisplayName:sub(1, #txt) == txt or plr.Name:sub(1, #txt) == txt then

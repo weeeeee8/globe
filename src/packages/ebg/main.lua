@@ -52,6 +52,10 @@ return {
             end
             return old(self, key)
         end)
+        
+        local docmagic = ReplicatedStorage:WaitForChild("Remotes").DoClientMagic
+        local domagic = ReplicatedStorage:WaitForChild("Remotes").DoMagic
+        local reservekey = ReplicatedStorage:WaitForChild("Remotes").KeyReserve
 
         local tab = windw:Tab{Text = "Elemental Battlegrounds"}
         local function buildSpellSpoofSection()
@@ -70,12 +74,11 @@ return {
                 spoofedSpells:save()
             end)
 
-            local remote = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
             fnUtil.hookmetamethod(game, '__namecall', function(old, self, ...)
                 if not checkcaller() then
-                    if getnamecallmethod() == "InvokeServer" and self == remote then
+                    if getnamecallmethod() == "InvokeServer" and self == domagic then
                         local realArgs = {...}
                         local SpellName = tostring(realArgs[2])
                         local isSpoofed = spoofedSpells[SpellName]
@@ -131,12 +134,12 @@ return {
 
             for k, _ in pairs(spoofedSpells.env) do
                 k = k:sub(2, #k)
-                spellSpoofSection:Toggle{
+                spellSpoofSection:Toggle({
                     Text = k,
                     Callback = function(v)
                         spoofedSpells:newsetting(k, v)
                     end
-                }
+                }):Set(spoofedSpells:getsetting(k))
             end
         end
 
@@ -300,13 +303,13 @@ return {
                 Text = "Disable Tech Lag State", Side = "Right",
             }
 
-            section:Toggle{
+            section:Toggle({
                 Text = "Disable All",
                 Callback = function(toggle)
                     setting:newsetting("Enabled", toggle)
                     updateState()
                 end,
-            }
+            }):Set(setting:getsetting("Enabled"))
             updateState()
         end
 
@@ -435,12 +438,12 @@ return {
                 end
             }
 
-            section:Toggle{
+            section:Toggle({
                 Text = "Respect Terrain",
                 Callback = function(toggle)
                     setting:newsetting("RespectsObstruction", toggle)
                 end
-            }
+            }):Set(setting:getsetting("RespectsObstruction"))
 
             section:Toggle{
                 Text = "Auto Index",
@@ -450,7 +453,7 @@ return {
             }
 
 
-            section:Input{
+            section:Input({
                 Text = "Set Minimum Distance",
                 Placeholder = "Minimum Distance",
                 Callback = function(txt)
@@ -458,9 +461,9 @@ return {
                     if not num then num = 200 end
                     setting:newsetting("MINDIST", num)
                 end
-            }
+            }):Set(setting:getsetting("MINDIST"))
 
-            section:Input{
+            section:Input({
                 Text = "Set Prediction Index",
                 Placeholder = "Prediction Index",
                 Callback = function(txt)
@@ -470,7 +473,7 @@ return {
                     setting:newsetting("PREDICTION_INDEX", num)
                     falsePredictionIndex = setting.PREDICTION_INDEX
                 end
-            }
+            }):Set(setting:getsetting("PREDICTION_INDEX"))
 
             section:Input{
                 Text = "Blacklist player",
@@ -522,7 +525,7 @@ return {
                 end
             }
 
-            section:Input{
+            section:Input({
                 Text = "Set Target Option",
                 Placeholder = "Locked / Mouse / Character",
                 Callback = function(txt)
@@ -536,7 +539,7 @@ return {
                         end
                     end
                 end
-            }
+            }):Set(setting:getsetting("TargetOption"))
             
             section:Input{
                 Text = "Set Locked Player",
@@ -668,10 +671,6 @@ return {
                 setting:save()
             end)
 
-            local docmagic = ReplicatedStorage:WaitForChild("Remotes").DoClientMagic
-            local domagic = ReplicatedStorage:WaitForChild("Remotes").DoMagic
-            local reservekey = ReplicatedStorage:WaitForChild("Remotes").KeyReserve
-
             local targetPlayer = nil
             local voidPosition = Vector3.new(0, workspace.FallenPartsDestroyHeight + 3, 0)
             local floatPosition = Vector3.new(10e5, 2^26, 10e5)
@@ -742,14 +741,14 @@ return {
                 end
             }
 
-            section:Input{
+            section:Input({
                 Text = "Set Troll Type",
                 Placeholder = "Troll type(?)",
                 Tooltip = "Float / Void / Spawn",
                 Callback = function(txt)
                     setting:newsetting("Type", txt:lower())
                 end
-            }
+            }):Set(setting:getsetting("Type"))
 
             section:Input{
                 Text = "Set Target Player",
@@ -831,12 +830,82 @@ return {
             }
         end
 
+        local function buildUltTrollSection()
+            local activeUltimate
+            local section = tab:Section{Text = "Ult Troll Options"}
+            local enabledUltimates = makeSet({
+                    Name = "Arcane Guardian",
+                    Parent = "Angel"
+                }, {
+                    Name = "Ethereal Acumen",
+                    Parent = "Illusion"
+                }
+            )
+            local activeUltimateLabel = section:Label{
+                Text = "Current Active Ultimate: None",
+                Tooltip = "Will instantly cast the input ultimate displayed here."
+            }
+
+            section:Input{
+                Text = "Set Ultimate",
+                Placeholder = "Ultimate Name",
+                Tooltip = "Arcane Guardian / Ethereal Acumen",
+                Callback = function(txt)
+                    if #txt <= 0 then
+                        activeUltimate = nil
+                        activeUltimateLabel:Set{
+                            Text = "Current Active Ultimate: None",
+                        }
+                        return
+                    end
+                    
+                    for v in pairs(enabledUltimates) do
+                        if v.Name:sub(1, #txt) == txt then
+                            activeUltimate = v
+                            break
+                        end
+                    end
+                    
+                    activeUltimateLabel:Set{
+                        Text = "Current Active Ultimate: " .. if activeUltimate ~= nil then tostring(activeUltimate.Name) else "None",
+                        Color = if activeUltimate ~= nil then oh.Constants.StateColors.Valid else oh.Constants.StateColors.Invalid
+                    }
+                end
+            }
+
+            section:Keybind{
+                Text = "Simulate Troll",
+                Default = Enum.KeyCode.N,
+                Callback = function()
+                    if not activeUltimate then return end
+                    local args = {
+                        [1] = activeUltimate.Parent,
+                        [2] = activeUltimate.Name,
+                    }
+                    local mousePos = if isMouseOverriden then overrideMouseCFrame.Position else mouse.Hit.Position
+
+                    if activeUltimate.Name == "Arcane Guardian" then
+                        args[3] = CFrame.new(mousePos + Vector3.new(0, 15.6, 0))
+                    elseif activeUltimate.Name == "Ethereal Acumen" then
+                        args[3] = CFrame.new(mousePos - Vector3.new(0, 25, 0))
+                    end
+                    docmagic:FireServer(unpack(args, 1, 2))
+                    domagic:InvokeServer(unpack(args))
+                end
+            }
+        end
+
+        local function buildSoundUltLag()
+
+        end
+
         buildTechDiskSection()
         buildSpellSpoofSection()
         buildAutotargetSection()
         buildDisorderIgnitionSection()
+        buildPunchAuraSection()
         buildAntiStaggerSection()
         buildAnimatorModifierSection()
-        buildPunchAuraSection()
+        buildUltTrollSection()
     end
 }
