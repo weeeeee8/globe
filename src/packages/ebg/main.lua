@@ -4,8 +4,6 @@ local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 
-local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
-
 local mouse = Players.LocalPlayer:GetMouse()
 local globesettings = import('lib/globesettings')
 local fnUtil = import('lib/functionUtil')

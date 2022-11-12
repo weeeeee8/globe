@@ -4,6 +4,8 @@ assert(isfolder and makefolder, "Executor does not support 'isfolder' and 'makef
 local SAVED_SETTINGS_PATH = 'globe/savedsettings'
 local SPECIAL_KEY_CHARACTER = '$' -- prevent duplicate values from [self.env] and self itself incase
 
+local stack = import('lib/stack')
+
 local function createFolder(path)
     if not isfolder(path) then
         makefolder(path)
@@ -50,6 +52,8 @@ local function createSettingClass(path, template)
         end
     end
 
+    stack.Push(settingsClass)
+
     return settingsClass
 end
 
@@ -63,6 +67,13 @@ function globesettings.group(groupName)
     createFolder(pathName)
     return function(name, template)
         return createSettingClass(pathName .. "/" .. name .. ".txt", template)
+    end
+end
+
+function globesettings.saveAll()
+    while stack.Size() > 1 do
+        local setting = stack.Pop()
+        setting:save()
     end
 end
 
