@@ -12,9 +12,6 @@ local function createFolder(path)
     end
 end
 
-createFolder('globe')
-createFolder(SAVED_SETTINGS_PATH)
-
 local function createSettingClass(path, template)
     local settingsClass = {}
     settingsClass.env = {}
@@ -56,6 +53,9 @@ local function createSettingClass(path, template)
 
     return settingsClass
 end
+
+createFolder('globe')
+createFolder(SAVED_SETTINGS_PATH)
 
 local globesettings = {}
 function globesettings.new(path, template)
