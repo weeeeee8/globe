@@ -4,7 +4,7 @@ assert(isfolder and makefolder, "Executor does not support 'isfolder' and 'makef
 local SAVED_SETTINGS_PATH = 'globe/savedsettings'
 local SPECIAL_KEY_CHARACTER = '$' -- prevent duplicate values from [self.env] and self itself incase
 
-local stack = import('lib/stack')
+local stack = import('lib/stack')()
 
 local function createFolder(path)
     if not isfolder(path) then
