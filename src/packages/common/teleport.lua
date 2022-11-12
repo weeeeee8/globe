@@ -25,12 +25,7 @@ return {
                     if targetChar then
                         local hrp, rhrp = targetChar:FindFirstChild("HumanoidRootPart"), getHRP()
                         if hrp and rhrp then
-                            local pos = hrp.Position
-                            local dir = pos + pos.Unit
-                            if hrp.AssemblyLinearVelocity.Magnitude > 0 then
-                                dir = pos + hrp.AssemblyLinearVelocity.Unit
-                            end
-                            rhrp.CFrame = CFrame.lookAt(pos, dir)
+                            rhrp.CFrame = hrp.CFrame
                         end
                     end
                 end
@@ -43,7 +38,12 @@ return {
         if mouse.Target ~= nil then
             local hrp = getHRP()
             if hrp then
-                hrp.CFrame = CFrame.new(mousepos + Vector3.new(0, 4, 0))
+                local dir = hrp.CFrame.LookVector * 50
+                if hrp.Parent.Humanoid.MoveDirection.Magnitude > 0 then
+                    dir = hrp.Parent.Humanoid.MoveDirection.Unit * 50
+                end
+                local pos = mousepos + Vector3.new(0, 2, 0)
+                hrp.CFrame = CFrame.lookAt(pos, pos + dir)
             end
         end
     end,

@@ -809,6 +809,8 @@ return {
         buildSpellSpoofSection()
         buildAutotargetSection()
         buildDisorderIgnitionSection()
+        buildAntiStaggerSection()
+        buildAnimatorModifierSection()
         buildPunchAuraSection()
     end
 }
