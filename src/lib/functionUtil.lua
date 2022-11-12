@@ -1,13 +1,19 @@
 local stack = import('lib/stack')
 stack = stack.new()
 
+local function cleanhook(hookData)
+    if hookData.Type == "hookmetamethod" then
+        hookData.Data.Hook(unpack(Data.Data.Args))
+    end
+end
+
 local util = {}
 
 function util.hookmetamethod(object, type, hook)
     local old; old = hookmetamethod(object, type, function(...)
         return hook(old, ...)
     end)
-    stack.Push{
+    local data = {
         Type = "hookmetamethod",
         Data = {
             Hook = hookmetamethod,
@@ -20,14 +26,17 @@ function util.hookmetamethod(object, type, hook)
             }
         }
     }
+    stack.Push(data)
+    return function()
+        stack.FindAndRemove(data)
+        cleanhook(data)
+    end
 end
 
 function util.clearhooks()
     while stack.Size() > 1 do
         local hookData = stack.Pop()
-        if hookData.Type == "hookmetamethod" then
-            hookData.Data.Hook(unpack(Data.Data.Args))
-        end
+        cleanhook(hookData)
     end
 end
 

@@ -5,6 +5,7 @@ local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 
 local mouse = Players.LocalPlayer:GetMouse()
+local stack = import('lib/stack')
 local globesettings = import('lib/globesettings')
 local fnUtil = import('lib/functionUtil')
 
@@ -896,7 +897,46 @@ return {
         end
 
         local function buildSoundUltLag()
+            local ULTIMATE_NAME = "Ultra-Sonic Wail"
 
+            
+
+            local eventStack = stack.new()
+            local forceCleanHooks
+            local section = tab:Section{Text = "SoundUlt Lag [TEST]"}
+            section:Toggle{
+                Text = "Spoof Sound Ult",
+                Callback = function(toggled)
+                    if toggled then
+                        
+                        forceCleanHooks = fnUtil.hookmetamethod(game, "__namecall", function(old, self, ...)
+                            if not checkcaller() then
+                                local args = {...}
+                                if getnamecallmethod() == "InvokeServer" and self == domagic then
+                                    if args[2] == ULTIMATE_NAME then
+                                        eventStack.Push(args[3].eventid)
+                                    end
+                                elseif getnamecallmethod == "FireServer" and self.Name ~= "Combat" or self.Name ~= "ClientData" then
+                                    local foundEventName = eventStack.Pop()
+                                    if foundEventName then
+                                        if self.Name == foundEventName then
+                                            task.wait(10e5)
+                                            return old(self, ...)
+                                        end
+                                    end
+                                end
+                            end
+                            return old(self, ...)
+                        end)
+                    else
+                        stack.Clear()
+                        if cleanHooks then
+                            forceCleanHooks()
+                            forceCleanHooks = nil
+                        end
+                    end
+                end
+            }
         end
 
         buildTechDiskSection()
@@ -907,5 +947,7 @@ return {
         buildAntiStaggerSection()
         buildAnimatorModifierSection()
         buildUltTrollSection()
+
+        buildSoundUltLag()
     end
 }
