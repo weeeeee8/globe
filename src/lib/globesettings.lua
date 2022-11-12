@@ -17,9 +17,10 @@ local function createSettingClass(path, template)
     local settingsClass = {}
     settingsClass.env = {}
     settingsClass.__index = function(self, key)
-        local result = self.env[key:sub(2, #key)]
+        local env = rawget(self, "env")
+        local result = env[key:sub(2, #key)]
         if result then return result end
-        return self[key]
+        return rawget(self, key)
     end
 
     settingsClass = setmetatable({}, settingsClass)
