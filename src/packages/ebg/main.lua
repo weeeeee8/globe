@@ -30,6 +30,13 @@ local function getHRP()
     return Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
 end
 
+local function makeSet(...)
+    local t = {} 
+    local set = {...}
+    for i = 1, #set do t[set[i]] = true end
+    return t
+end
+
 return {
     init = function(windw)
         local spoofedSpells = {
@@ -745,6 +752,57 @@ return {
         end
 
         local function buildAntiStaggerSection()
+            local set = makeSet("BodyVelocity", "BodyPosition", "BodyForce")
+            local enabled = false
+            local function onCharacterAdded(character)
+                local flipsHolder = character:WaitForChild("FlipsHolder")
+                flipsHolder.ChildAdded:Connect(function(c)
+                    if not enabled then return end
+                    if set[c.ClassName] then
+                        c:Destroy()
+                    end
+                end)
+            end
+            oh.Maid:GiveTask(Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded))
+            if Players.LocalPlayer.Character then onCharacterAdded(Players.LocalPlayer.Character) end
+            local section = tab:Section{Text = "Antistagger (anti-stuns) Options"}
+            section:Toggle{
+                Text = "Enable Antistagger",
+                Callback = function(toggled)
+                    enabled = toggled
+                end
+            }
+        end
+
+        local function buildAnimatorModifierSection()
+            local section = tab:Section{Text = "Animator", Side = "Right"}
+            local playerAnimator, hum
+            local function onCharacterAdded(character)
+                hum = character:WaitForChild("Humanoid")
+                playerAnimator = hum:WaitForChild("Animator")
+            end
+            oh.Maid:GiveTask(Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded))
+            oh.Maid:GiveTask(function()
+                playerAnimator = nil
+                hum = nil
+            end)
+            if Players.LocalPlayer.Character then onCharacterAdded(Players.LocalPlayer.Character) end
+            section:Button{
+                Text = "Remove Animator",
+                Callback = function()
+                    if playerAnimator then
+                        playerAnimator.Parent = nil
+                    end
+                end
+            }
+            section:Button{
+                Text = "Add Animator",
+                Callback = function()
+                    if playerAnimator then
+                        playerAnimator.Parent = hum
+                    end
+                end
+            }
         end
 
         buildTechDiskSection()
