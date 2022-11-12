@@ -1,4 +1,7 @@
 local RunService = game:GetService("RunService")
+
+local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
+
 local Maid = import('lib/maid')
 
 local RNG = Random.new()

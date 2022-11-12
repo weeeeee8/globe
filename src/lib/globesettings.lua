@@ -4,6 +4,8 @@ assert(isfolder and makefolder, "Executor does not support 'isfolder' and 'makef
 local SAVED_SETTINGS_PATH = 'globe/savedsettings'
 local SPECIAL_KEY_CHARACTER = '$' -- prevent duplicate values from [self.env] and self itself incase
 
+local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
+
 local stack = import('lib/stack')
 stack = stack.new()
 

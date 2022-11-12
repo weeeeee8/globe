@@ -1,3 +1,5 @@
+local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
+
 local stack = import('lib/stack')
 stack = stack.new()
 
