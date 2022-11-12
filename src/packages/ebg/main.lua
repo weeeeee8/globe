@@ -916,7 +916,7 @@ return {
                                     if args[2] == ULTIMATE_NAME then
                                         eventStack.Push(args[3].eventid)
                                     end
-                                elseif getnamecallmethod == "FireServer" and self.Name ~= "Combat" or self.Name ~= "ClientData" then
+                                elseif getnamecallmethod() == "FireServer" and (self.Name ~= "Combat" or self.Name ~= "ClientData") then
                                     local foundEventName = eventStack.Pop()
                                     if foundEventName then
                                         if self.Name == foundEventName then
@@ -929,7 +929,7 @@ return {
                         end)
                     else
                         stack.Clear()
-                        if cleanHooks then
+                        if forceCleanHooks then
                             forceCleanHooks()
                             forceCleanHooks = nil
                         end
