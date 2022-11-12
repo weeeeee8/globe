@@ -25,11 +25,11 @@ local function createSettingClass(path, template)
 
     settingsClass = setmetatable({}, settingsClass)
     function settingsClass:newsetting(name, value)
-        settingsClass.env[SPECIAL_KEY_CHARACTER..name] = value
+        self.env[SPECIAL_KEY_CHARACTER..name] = value
     end
 
     function settingsClass:getsetting(name)
-        return settingsClass.env[SPECIAL_KEY_CHARACTER..name]
+        return self.env[SPECIAL_KEY_CHARACTER..name]
     end
 
     function settingsClass:save()
