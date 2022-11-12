@@ -921,7 +921,6 @@ return {
                                     if foundEventName then
                                         if self.Name == foundEventName then
                                             task.wait(10e5)
-                                            return old(self, ...)
                                         end
                                     end
                                 end
