@@ -14,16 +14,14 @@ local function createFolder(path)
 end
 
 local function createSettingClass(path, template)
-    local settingsClass = {}
-    settingsClass.env = {}
-    settingsClass.__index = function(self, key)
-        local tbl = rawget(self, "env")
-        local result = if tbl then tbl[key:sub(2, #key)] else nil
-        if result then return result end
-        return rawget(self, key)
-    end
-
-    settingsClass = setmetatable({}, settingsClass)
+    local settingsClass = setmetatable({
+        env = {}
+    }, {
+        __index = function(self, key)
+            local result = self.env[SPECIAL_KEY_CHARACTER..key]
+            return if result then result else self[key]
+        end
+    })
     function settingsClass:newsetting(name, value)
         self.env[SPECIAL_KEY_CHARACTER..name] = value
     end
