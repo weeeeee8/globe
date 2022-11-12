@@ -53,9 +53,16 @@ local function createSettingClass(path, template)
 end
 
 local globesettings = {}
-function globesettings.new(name, template)
-    local pathName = SAVED_SETTINGS_PATH .. "/" .. name
-    return createSettingClass(pathName, template)
+function globesettings.new(path, template)
+    return createSettingClass(path .. ".txt", template)
+end
+
+function globesettings.group(groupName)
+    local pathName = SAVED_SETTINGS_PATH .. "/" .. groupName
+    createFolder(pathName)
+    return function(name, template)
+        return createSettingClass(pathName .. "/" .. name .. ".txt", template)
+    end
 end
 
 return globesettings

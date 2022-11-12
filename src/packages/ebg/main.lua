@@ -8,6 +8,7 @@ local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not
 
 local mouse = Players.LocalPlayer:GetMouse()
 local globesettings = import('lib/globesettings')
+local fnUtil = import('lib/functionUtil')
 
 local function deepCopy(original)
     local copy = {}
@@ -33,17 +34,7 @@ end
 
 return {
     init = function(windw)
-        local folderPath = globesettings.group("ebg")
-        local spoofedSpells = globesettings.new('SavedSpoofSpellsSettings',{
-            ['Lightning Flash'] = false,
-            ['Lightning Barrage'] = false,
-            ['Splitting Slime'] = false,
-            ['Illusive Atake'] = false,
-            ['Blaze Column'] = false,
-            ['Refraction'] = false,
-            ['Water Beam'] = false,
-            ['Orbital Strike'] = false,
-        })
+        local wrapSettingFn = globesettings.group("ebg")
 
         local function getMouseWorldPosition()
             local pos = UserInputService.GetMouseLocation(UserInputService)
@@ -54,29 +45,33 @@ return {
 
         local overrideMouseCFrame = CFrame.new()
         local isMouseOverriden = false
-        local oldMouse; oldMouse = hookmetamethod(mouse, '__index', function(self, key)
+        fnUtil.hookmetamethod(mouse, '__index', function(old, self, key)
             if not checkcaller() then
                 if isMouseOverriden and key == "Hit" then
                     return overrideMouseCFrame
                 end
-                return oldMouse(self, key)
+                return old(self, key)
             end
-            return oldMouse(self, key)
-        end)
-
-        oh.Maid:GiveTask(function()
-            isMouseOverriden = false
-            for k in pairs(spoofedSpells) do
-                spoofedSpells[k] = false
-            end
+            return old(self, key)
         end)
 
         local tab = windw:Tab{Text = "Elemental Battlegrounds"}
         local function buildSpellSpoofSection()
+            local spoofedSpells = wrapSettingFn('SavedSpoofSpellsSettings',{
+                ['Lightning Flash'] = false,
+                ['Lightning Barrage'] = false,
+                ['Splitting Slime'] = false,
+                ['Illusive Atake'] = false,
+                ['Blaze Column'] = false,
+                ['Refraction'] = false,
+                ['Water Beam'] = false,
+                ['Orbital Strike'] = false,
+            })
+
             local remote = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
-            local oldSpoof; oldSpoof = hookmetamethod(game, '__namecall', function(self, ...) -- functionUtil.hookmetamethod()
+            fnUtil.hookmetamethod(game, '__namecall', function(old, self, ...)
                 if not checkcaller() then
                     if getnamecallmethod() == "InvokeServer" and self == remote then
                         local realArgs = {...}
@@ -103,7 +98,7 @@ return {
                             elseif SpellName == "Orbital Strike" then
                                 fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0)) else realArgs[3]
                             end
-                            return oldSpoof(self, unpack(fakeArgs))
+                            return old(self, unpack(fakeArgs))
                         else
                             local fakeArgs = {unpack(realArgs)}
                             if SpellName == "Lightning Flash" then
@@ -124,12 +119,12 @@ return {
                                     end
                                 end
                             end
-                            return oldSpoof(self, unpack(fakeArgs))
+                            return old(self, unpack(fakeArgs))
                         end
                     end
                 end
 
-                return oldSpoof(self, ...)
+                return old(self, ...)
             end)
 
             for k, _ in pairs(spoofedSpells.env) do
