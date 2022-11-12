@@ -17,8 +17,8 @@ local function createSettingClass(path, template)
     local settingsClass = {}
     settingsClass.env = {}
     settingsClass.__index = function(self, key)
-        local env = rawget(self, "env")
-        local result = env[key:sub(2, #key)]
+        local tbl = rawget(self, "env")
+        local result = if tbl then tbl[key:sub(2, #key)] else nil
         if result then return result end
         return rawget(self, key)
     end
