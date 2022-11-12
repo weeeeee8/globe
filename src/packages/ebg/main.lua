@@ -2,18 +2,12 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
-local TeleportService = game:GetService("TeleportService")
 local UserInputService = game:GetService("UserInputService")
 
 local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
 
 local mouse = Players.LocalPlayer:GetMouse()
-
-local FlyAPI = import('packages/common/fly')
-FlyAPI.Start()
-
-local TeleportAPI = import('packages/common/teleport')
-TeleportAPI.Start()
+local globesettings = import('lib/globesettings')
 
 local function deepCopy(original)
     local copy = {}
@@ -39,7 +33,8 @@ end
 
 return {
     init = function(windw)
-        local spoofedSpells = {
+        local folderPath = globesettings.group("ebg")
+        local spoofedSpells = globesettings.new('SavedSpoofSpellsSettings',{
             ['Lightning Flash'] = false,
             ['Lightning Barrage'] = false,
             ['Splitting Slime'] = false,
@@ -48,7 +43,7 @@ return {
             ['Refraction'] = false,
             ['Water Beam'] = false,
             ['Orbital Strike'] = false,
-        }
+        })
 
         local function getMouseWorldPosition()
             local pos = UserInputService.GetMouseLocation(UserInputService)
@@ -81,7 +76,7 @@ return {
             local remote = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
-            local oldSpoof; oldSpoof = hookmetamethod(game, '__namecall', function(self, ...)
+            local oldSpoof; oldSpoof = hookmetamethod(game, '__namecall', function(self, ...) -- functionUtil.hookmetamethod()
                 if not checkcaller() then
                     if getnamecallmethod() == "InvokeServer" and self == remote then
                         local realArgs = {...}
@@ -137,11 +132,12 @@ return {
                 return oldSpoof(self, ...)
             end)
 
-            for k, _ in pairs(spoofedSpells) do
+            for k, _ in pairs(spoofedSpells.env) do
+                k = k:sub(2, #k)
                 spellSpoofSection:Toggle{
                     Text = k,
                     Callback = function(v)
-                        spoofedSpells[k] = v
+                        spoofedSpells:newsetting(k, v)
                     end
                 }
             end
@@ -263,6 +259,10 @@ return {
         end
 
         local function buildTechDiskSection()
+            local setting = globesettings.new('SavedEnableTechLagValue', {
+                Enabled = false
+            })
+
             local conns = {}
             function conns:Destroy()
                 for _, v in ipairs(self) do
@@ -270,8 +270,29 @@ return {
                     v = nil
                 end
             end
-
             oh.Maid:GiveTask(conns)
+
+            local function updateState()
+                if not setting.Enabled then
+                    conns:Destroy()
+                else
+                    table.insert(conns, game.Players.LocalPlayer.PlayerScripts.ChildAdded:Connect(function(c)
+                        if c.Name == "DiscScript" then
+                              c.Disabled = true
+                            task.delay(1, c.Destroy, c)
+                        end
+                    end))
+
+                    table.insert(conns, workspace['.Ignore']['.LocalEffects'].ChildAdded:Connect(function(c)
+                        if c.Name == "LightDisc" then
+                            task.delay(1, c.Destroy, c)
+                        end
+                        if c.Name == "DeadlyDisc" then
+                            task.delay(1, c.Destroy, c)
+                        end
+                    end))
+                end
+            end
 
             local section = tab:Section{
                 Text = "Disable Tech Lag State", Side = "Right",
@@ -280,34 +301,24 @@ return {
             section:Toggle{
                 Text = "Disable All",
                 Callback = function(toggle)
-                    if not toggle then
-                        conns:Destroy()
-                    else
-                        table.insert(conns, game.Players.LocalPlayer.PlayerScripts.ChildAdded:Connect(function(c)
-                            if c.Name == "DiscScript" then
-                                  c.Disabled = true
-                                task.delay(1, c.Destroy, c)
-                            end
-                        end))
-
-                        table.insert(conns, workspace['.Ignore']['.LocalEffects'].ChildAdded:Connect(function(c)
-                            if c.Name == "LightDisc" then
-                                task.delay(1, c.Destroy, c)
-                            end
-                            if c.Name == "DeadlyDisc" then
-                                task.delay(1, c.Destroy, c)
-                            end
-                        end))
-                    end
+                    setting:newsetting("Enabled", toggle)
+                    updateState()
                 end,
             }
+            updateState()
         end
 
         local function buildAutotargetSection()
+            local setting = globesettings.new("SavedAutoTargetSettings", {
+                PREDICTION_INDEX = 5,
+                MINDIST = 200,
+                RespectsObstruction = false,
+                TargetOption = "Locked",
+            })
+
             local NUMS_OF_PREDICTIONS = 16
             local FIXED_TIME_SCALE = 1
             local PREDICTION_INDEX = 5
-            local MINDIST = 200
 
             local pointsFolder = workspace:FindFirstChild(".points") or Instance.new("Folder", workspace)
             pointsFolder.Name = ".points"
@@ -316,9 +327,7 @@ return {
             local targetPlayer
             local falsePredictionIndex = PREDICTION_INDEX
             local autoPredictIndex = false
-            local respectsObstruction = false
             local enabled = false
-            local targetOption = "locked"
             local autofill = {"character", "mouse", "locked"}
             local players = {}
             local ignorePlayers= {[Players.LocalPlayer] = true}
@@ -376,8 +385,8 @@ return {
                     if v.Character:FindFirstChildOfClass("ForceField") then continue end
                     if not hum or hum.Health <= 0 then continue end
                     local d = v:DistanceFromCharacter(position)
-                    if d > MINDIST then continue end
-                    if respectsObstruction == true and isObstructedByMap(getHRP().Position, hum.RootPart.Position) then continue end
+                    if d > setting.MINDIST then continue end
+                    if setting.RespectsObstruction == true and isObstructedByMap(getHRP().Position, hum.RootPart.Position) then continue end
                     table.insert(plrs, {
                         dist = d,
                         plr = v
@@ -404,7 +413,7 @@ return {
             }
             
             local optionLabel = section:Label{
-                Text = "Current option: " .. (string.sub(targetOption, 1, 1):upper() .. string.sub(targetOption, 2, #targetOption)),
+                Text = "Current option: " .. (string.sub(setting.TargetOption, 1, 1):upper() .. string.sub(setting.TargetOption, 2, #setting.TargetOption)),
             }
 
             section:Keybind{
@@ -423,7 +432,7 @@ return {
             section:Toggle{
                 Text = "Respect Terrain",
                 Callback = function(toggle)
-                    respectsObstruction = toggle
+                    setting:newsetting("RespectsObstruction", toggle)
                 end
             }
 
@@ -441,7 +450,7 @@ return {
                 Callback = function(txt)
                     local num = tonumber(txt)
                     if not num then num = 200 end
-                    MINDIST = num
+                    setting:newsetting("MINDIST", num)
                 end
             }
 
@@ -452,8 +461,8 @@ return {
                     local num = tonumber(txt)
                     if not num then num = 3 end
                     num = math.clamp(num, 1, NUMS_OF_PREDICTIONS)
-                    PREDICTION_INDEX = num
-                    falsePredictionIndex = PREDICTION_INDEX
+                    setting:newsetting("PREDICTION_INDEX", num)
+                    falsePredictionIndex = setting.PREDICTION_INDEX
                 end
             }
 
@@ -513,11 +522,11 @@ return {
                 Callback = function(txt)
                     for i = #autofill, 1, -1 do
                         if autofill[i]:find(txt:lower(), 1) then
-                            targetOption = autofill[i]
+                            setting:newsetting("TargetOption", autofill[i])
                             optionLabel:Set{
-                                Text = "Current option: " .. (string.sub(targetOption, 1, 1):upper() .. string.sub(targetOption, 2, #targetOption)),
+                                Text = "Current option: " .. (string.sub(setting.TargetOption, 1, 1):upper() .. string.sub(setting.TargetOption, 2, #setting.TargetOption)),
                             }
-                            return
+                            break
                         end
                     end
                 end
@@ -546,16 +555,16 @@ return {
                 if rhrp then
                     local pos = Vector3.zero
                     local targetChar
-                    if targetOption == "locked" then
+                    if setting.TargetOption == "locked" then
                         if targetPlayer then
                             targetChar = targetPlayer.Character
                         end
-                    elseif targetOption == "mouse" then
+                    elseif setting.TargetOption == "mouse" then
                         local foundPlayer = getNearestPlayerFromPosition(getMouseWorldPosition())
                         if foundPlayer then
                             targetChar = foundPlayer.Character
                         end
-                    elseif targetOption == "character" then
+                    elseif setting.TargetOption == "character" then
                         local foundPlayer = getNearestPlayerFromPosition(rhrp.Position)
                         if foundPlayer then
                             targetChar = foundPlayer.Character
@@ -595,7 +604,7 @@ return {
                             local accel = (velocity-data.lastVelocity) / dt
             
                             for i = 1, NUMS_OF_PREDICTIONS do
-                                local Point: Part = newPoint(i, PREDICTION_INDEX)
+                                local Point: Part = newPoint(i, setting.PREDICTION_INDEX)
                                 local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
                                 local p
                                 if (flipsHolder ~= nil) then
@@ -608,7 +617,7 @@ return {
                                     p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
                                 end
                                 Point.Position = p
-                                if i == (if autoPredictIndex then falsePredictionIndex else PREDICTION_INDEX) then
+                                if i == (if autoPredictIndex then falsePredictionIndex else setting.PREDICTION_INDEX) then
                                     if isObstructedByMap(hrp.Position, p) or (p - hrp.Position).Magnitude > 100 then
                                         pos = hrp.Position
                                     else
@@ -645,6 +654,9 @@ return {
         end
 
         local function buildDisorderIgnitionSection()
+            local setting = globesettings.new("SavedDisorderIgnitionTrollType", {
+                Type = "void"
+            })
             local docmagic = ReplicatedStorage:WaitForChild("Remotes").DoClientMagic
             local domagic = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local reservekey = ReplicatedStorage:WaitForChild("Remotes").KeyReserve
@@ -652,7 +664,6 @@ return {
             local targetPlayer = nil
             local voidPosition = Vector3.new(0, workspace.FallenPartsDestroyHeight + 3, 0)
             local floatPosition = Vector3.new(10e5, 2^26, 10e5)
-            local trolltype = "void"
             local spawnlocationsbyPlaceId = {
                 [2569625809]  = Vector3.new(-1100.52, 65.125, 282.28),
                 [570158081] = Vector3.new(-1907.776, 126.015, -414.179),
@@ -682,11 +693,11 @@ return {
                             local ohum, ohrp, rhrp = targetCharacter:FindFirstChild("Humanoid"), targetCharacter:FindFirstChild("HumanoidRootPart"), getHRP()
                             if ohum and ohrp and rhrp then
                                 local targetPos = Vector3.zero
-                                if trolltype == "void" then
+                                if setting.Type == "void" then
                                     targetPos = voidPosition
-                                elseif trolltype == "spawn" then
+                                elseif setting.Type == "spawn" then
                                     targetPos = spawnlocationsbyPlaceId[game.PlaceId]
-                                elseif trolltype == "float" then
+                                elseif setting.Type == "float" then
                                     targetPos = floatPosition
                                 end
 
@@ -725,7 +736,7 @@ return {
                 Placeholder = "Troll type(?)",
                 Tooltip = "Float / Void / Spawn",
                 Callback = function(txt)
-                    trolltype = txt:lower()
+                    setting:newsetting("Type", txt:lower())
                 end
             }
 
