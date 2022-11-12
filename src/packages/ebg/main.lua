@@ -901,7 +901,7 @@ return {
 
             
 
-            local eventStack = stack.new()
+            local curEventId = ""
             local forceCleanHooks
             local section = tab:Section{Text = "SoundUlt Lag [TEST]"}
             section:Toggle{
@@ -914,14 +914,11 @@ return {
                                 local args = {...}
                                 if getnamecallmethod() == "InvokeServer" and self == domagic then
                                     if args[2] == ULTIMATE_NAME then
-                                        eventStack.Push(args[3].eventid)
+                                        curEventId = args[3].eventid
                                     end
-                                elseif getnamecallmethod() == "FireServer" and (self.Name ~= "Combat" or self.Name ~= "ClientData") then
-                                    local foundEventName = eventStack.Pop()
-                                    if foundEventName then
-                                        if self.Name == foundEventName then
-                                            task.wait(10e5)
-                                        end
+                                elseif getnamecallmethod() == "FireServer" and curEventId then
+                                    if self.Name == curEventId then
+                                        task.wait(10e5)
                                     end
                                 end
                             end
