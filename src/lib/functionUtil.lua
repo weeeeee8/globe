@@ -22,7 +22,9 @@ function util.hookmetamethod(object, type, hook)
             Args = {
                 [1] = object,
                 [2] = type,
-                [3] = old
+                [3] = function(...)
+                    return old(...)
+                end
             }
         }
     }
