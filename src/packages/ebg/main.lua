@@ -752,14 +752,14 @@ return {
         end
 
         local function buildAntiStaggerSection()
-            local set = makeSet("BodyVelocity", "BodyPosition", "BodyForce")
+            local set = makeSet("BodyPosition", "BodyForce")
             local enabled = false
             local function onCharacterAdded(character)
                 local flipsHolder = character:WaitForChild("FlipsHolder")
                 flipsHolder.ChildAdded:Connect(function(c)
                     if not enabled then return end
                     if set[c.ClassName] then
-                        c:Destroy()
+                        task.delay(0.07, c.Destroy, c)
                     end
                 end)
             end
