@@ -1,4 +1,5 @@
-local stack = import('lib/stack')()
+local stack = import('lib/stack')
+stack = stack.new()
 
 local util = {}
 
