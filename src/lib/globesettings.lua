@@ -18,8 +18,9 @@ local function createSettingClass(path, template)
         env = {}
     }, {
         __index = function(self, key)
-            local result = self.env[SPECIAL_KEY_CHARACTER..key]
-            return if result then result else self[key]
+            local tbl = rawget(self, 'env')
+            local result = tbl[SPECIAL_KEY_CHARACTER..key]
+            return if result then result else rawget(self, key)
         end
     })
     function settingsClass:newsetting(name, value)
