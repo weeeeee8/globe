@@ -66,6 +66,10 @@ return {
                 ['Orbital Strike'] = false,
             })
 
+            oh.Maid:GiveTask(function()
+                spoofedSpells:save()
+            end)
+
             local remote = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local spellSpoofSection = tab:Section{Text = "Spell Spoofing Options"}
 
@@ -252,9 +256,14 @@ return {
         end
 
         local function buildTechDiskSection()
-            local setting = globesettings.new('SavedEnableTechLagValue', {
+            local setting = wrapSettingFn('SavedEnableTechLagValue', {
                 Enabled = false
             })
+
+            oh.Maid:GiveTask(function()
+                setting:save()
+            end)
+
 
             local conns = {}
             function conns:Destroy()
@@ -302,12 +311,16 @@ return {
         end
 
         local function buildAutotargetSection()
-            local setting = globesettings.new("SavedAutoTargetSettings", {
+            local setting = wrapSettingFn("SavedAutoTargetSettings", {
                 PREDICTION_INDEX = 5,
                 MINDIST = 200,
                 RespectsObstruction = false,
                 TargetOption = "Locked",
             })
+
+            oh.Maid:GiveTask(function()
+                setting:save()
+            end)
 
             local NUMS_OF_PREDICTIONS = 16
             local FIXED_TIME_SCALE = 1
@@ -647,9 +660,14 @@ return {
         end
 
         local function buildDisorderIgnitionSection()
-            local setting = globesettings.new("SavedDisorderIgnitionTrollType", {
+            local setting = wrapSettingFn("SavedDisorderIgnitionTrollType", {
                 Type = "void"
             })
+
+            oh.Maid:GiveTask(function()
+                setting:save()
+            end)
+
             local docmagic = ReplicatedStorage:WaitForChild("Remotes").DoClientMagic
             local domagic = ReplicatedStorage:WaitForChild("Remotes").DoMagic
             local reservekey = ReplicatedStorage:WaitForChild("Remotes").KeyReserve

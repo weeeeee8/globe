@@ -44,7 +44,7 @@ local function createSettingClass(path, template)
 
     if isfile(path) then
         local ran, result = pcall(readfile, path)
-        if not ran then
+        if ran then
             settingsClass.env = HttpService:JSONDecode(result) -- override the current environment
         end
     end

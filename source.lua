@@ -22,4 +22,3 @@ env.oh = {
 
 import('/constructGui')
 oh.Maid:GiveTask(fnUtil.clearhooks)
-oh.Maid:GiveTask(setting.saveAll)
