@@ -3,23 +3,35 @@ local default = {
         local stack, pushStack, popStack, getSize, findAndRemove, clearAll do
             stack = {}
             pushStack = function(input)
-                table.insert(stack, input)
+                stack[#stack+1] = input
             end 
             popStack = function()
                 if #stack <= 0 then return nil end
-                return table.remove(stack, #stack)
+                local output = stack[#stack]
+                stack[#stack] = nil
+                return output
             end
             getSize = function()
                 return #stack
             end
             findAndRemove = function(input)
-                local foundIndex = table.find(stack, input)
+                local function find(stack, input)
+                    for i = #stack, 1, -1 do
+                        if stack[i] == input then
+                            return i
+                        end
+                    end
+                    return nil
+                end
+                local foundIndex = find(stack, input)
                 if foundIndex then
-                    table.remove(stack, foundIndex)
+                    stack[#stack] = nil
                 end
             end
             clearAll = function()
-                table.clear(stack)
+                for i = #stack, 1, -1 do
+                    stack[i] = nil
+                end
             end
         end
 

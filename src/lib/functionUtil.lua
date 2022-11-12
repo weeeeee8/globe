@@ -3,7 +3,7 @@ stack = stack.new()
 
 local function cleanhook(hookData)
     if hookData.Type == "hookmetamethod" then
-        hookData.Data.Hook(unpack(Data.Data.Args))
+        hookData.Data.Hook(unpack(hookData.Data.Args))
     end
 end
 
