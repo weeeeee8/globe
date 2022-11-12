@@ -5,12 +5,11 @@ if oh then
     oh = nil
 end
 
-local importLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/weeeeee8/globe/main/src/lib/import.lua'))()
-local Maid = importLib('lib/maid')
-local fnUtil = importLib('lib/functionUtil')
-local setting = importLib('lib/globesettings')
+env.import = loadstring(game:HttpGet('https://raw.githubusercontent.com/weeeeee8/globe/main/src/lib/import.lua'))()
+local Maid = import('lib/maid')
+local fnUtil = import('lib/functionUtil')
+local setting = import('lib/globesettings')
 
-env.import = importLib
 env.oh = {
     Maid = Maid.new(),
     Constants = {
@@ -21,6 +20,6 @@ env.oh = {
     }
 }
 
-importLib('/constructGui')
+import('/constructGui')
 oh.Maid:GiveTask(fnUtil.clearhooks)
 oh.Maid:GiveTask(setting.saveAll)

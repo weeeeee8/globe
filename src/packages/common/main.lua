@@ -2,8 +2,6 @@ local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
 local TeleportService = game:GetService("TeleportService")
 
-local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
-
 local Maid = import('lib/maid')
 
 local FlyAPI = import('packages/common/fly')

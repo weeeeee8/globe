@@ -1,10 +1,10 @@
-return {
+local default = {
     new = function()
         local stack, pushStack, popStack, getSize do
             stack = {}
             pushStack = function(input)
                 table.insert(stack, input)
-            end
+            end 
             popStack = function()
                 if #stack <= 0 then return nil end
                 return table.remove(stack, #stack)
@@ -21,3 +21,5 @@ return {
         }
     end
 }
+
+return default
