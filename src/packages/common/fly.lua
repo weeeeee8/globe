@@ -22,12 +22,11 @@ local function getHum()
     return Players.LocalPlayer.Character:FindFirstChild("Humanoid")
 end
 
-local function constructFlyStuff()
+local function constructFlyStuff(hrp)
     if velocityObject then
         velocityObject:Destroy()
         velocityObject = nil
     end
-
     if gyroObject then
         gyroObject:Destroy()
         gyroObject = nil
@@ -37,8 +36,8 @@ local function constructFlyStuff()
     velocity.P = 2500
     velocity.Velocity = Vector3.zero
     velocity.MaxForce = Vector3.one * math.huge
+    velocity.Name = "flyvel"
     velocity.Parent = hrp
-    velocityObject.Name = "flyvel"
     velocityObject = velocity
     local gyro = Instance.new("BodyGyro")
     gyro.P = 10^6
@@ -90,7 +89,7 @@ return {
                     velocityObject.Velocity = f
                     gyroObject.CFrame = workspace.CurrentCamera.CFrame
                 else
-                    constructFlyStuff()
+                    constructFlyStuff(getHRP())
                 end
             end
         end))
@@ -156,7 +155,7 @@ return {
             end
 
             if not hrp then return end
-            constructFlyStuff()
+            constructFlyStuff(hrp)
         else
             if velocityObject then
                 velocityObject:Destroy()
