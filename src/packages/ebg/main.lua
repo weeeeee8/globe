@@ -922,7 +922,7 @@ return {
                         delay = 2.1
                         args[3] = mousePos
                     elseif activeUltimate.Name == "Void Opening" then
-                        delay = 1.4
+                        delay = 3
                         args[3] = mousePos
                     end
                     docmagic:FireServer(unpack(args))
@@ -954,9 +954,9 @@ return {
 
             local curEventId = ""
             local forceCleanHooks
-            local section = tab:Section{Text = "SoundUlt Lag [TEST]"}
+            local section = tab:Section{Text = "Global Sound Ult"}
             section:Toggle{
-                Text = "Spoof Sound Ult",
+                Text = "Enable Target All",
                 Callback = function(toggled)
                     if toggled then
                         
@@ -972,7 +972,7 @@ return {
                                         local c = {}
                                         for i = 1, 5 do
                                             for _, v in ipairs(game.Players.GetPlayers(game.Players)) do
-                                                if v == Players.LocalPlayer.Character then return end
+                                                if v == Players.LocalPlayer then return end
                                                 c[#c+1] = v.Character
                                             end
                                         end
