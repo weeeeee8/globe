@@ -69,6 +69,7 @@ return {
                 ['Refraction'] = false,
                 ['Water Beam'] = false,
                 ['Orbital Strike'] = false,
+                ['Orbs of Enlightment'] = false,
             })
 
             oh.Maid:GiveTask(function()
@@ -103,6 +104,16 @@ return {
                                 fakeArgs[3].Origin = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
                             elseif SpellName == "Orbital Strike" then
                                 fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0)) else realArgs[3]
+                            elseif SpellName == "Orbs of Enlightment" then
+                                local c = {}
+                                for i = 1, #realArgs[3].Coordinates do
+                                    c[#c+1] = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 2, 0) else realArgs[3].Coordinates[i] or CFrame.identity
+                                end
+                                local newArgs = {
+                                    Origin = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 2, 0) else realArgs[3].Origin,
+                                    Coordinates = c
+                                }
+                                fakeArgs[3] = newArgs
                             end
                             return old(self, unpack(fakeArgs))
                         else
@@ -847,6 +858,12 @@ return {
                 }, {
                     Name = "Ethereal Acumen",
                     Parent = "Illusion"
+                }, {
+                    Name = "The World",
+                    Parent = "Time"
+                }, {
+                    Name = "Void Opening",
+                    Parent = "Void"
                 }
             )
             local activeUltimateLabel = section:Label{
@@ -892,12 +909,25 @@ return {
                     }
                     local mousePos = if isMouseOverriden then overrideMouseCFrame.Position else mouse.Hit.Position
 
+                    local additionalClientVals = {}
                     if activeUltimate.Name == "Arcane Guardian" then
                         args[3] = CFrame.new(mousePos + Vector3.new(0, 15.6, 0))
                     elseif activeUltimate.Name == "Ethereal Acumen" then
                         args[3] = CFrame.new(mousePos - Vector3.new(0, 25, 0))
+                    elseif activeUltimate.Name == "The World" then
+                        args[3] = {
+                            rPos = mousePos,
+                            norm = Vector3.yAxis,
+                            rhit = workspace.Map.Part
+                        }
+
+                        additionalClientVals[1] = mousePos
+                    elseif activeUltimate.Name == "Void Opening" then
+                        args[3] = {
+                            pos = mousePos
+                        }
                     end
-                    docmagic:FireServer(unpack(args, 1, 2))
+                    docmagic:FireServer(unpack(args, 1, 2), unpack(additionalClientVals))
                     domagic:InvokeServer(unpack(args))
                 end
             }
@@ -906,7 +936,6 @@ return {
         local function buildSoundUltLag()
             local ULTIMATE_NAME = "Ultra-Sonic Wail"
 
-        
             local curEventId = ""
             local forceCleanHooks
             local section = tab:Section{Text = "SoundUlt Lag [TEST]"}
