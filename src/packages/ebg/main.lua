@@ -778,13 +778,18 @@ return {
             local bodyparts = makeSet("Head", "FlipsHolder")
             local enabled = false
             local function onCharacterAdded(character)
-                character:WaitForChild("Humanoid"):SetStateEnabled(Enum.HumanoidStateType.PlatformStanding, false)
+                local hum = character:WaitForChild("Humanoid") :: Humanoid
+                hum.StateChanged:Connect(function(old, new)
+                    if (new == Enum.HumanoidStateType.PlatformStanding or new == Enum.HumanoidStateType.Seated or new == Enum.HumanoidStateType.Ragdoll) and enabled then
+                        hum:ChangeState(old)
+                    end
+                end)
                 for _, v in ipairs(character:GetChildren()) do
                     if not bodyparts[v.Name] then continue end
                     v.ChildAdded:Connect(function(c)
                         if not enabled then return end
                         if set[c.ClassName] then
-                            task.delay(0.07, c.Destroy, c)
+                            task.delay(0.03, c.Destroy, c)
                         end
                     end)
                 end

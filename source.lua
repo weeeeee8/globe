@@ -1,5 +1,13 @@
 local env = assert(getgenv, "[GLOBE] getgenv cannot be found, executor might not be supported")()
 
+if not env.AutoSaveHandler then
+    env.AutoSaveHandler = game.Close:Connect(function()
+        if oh then
+            oh.Maid:Destroy()
+        end
+    end)
+end
+
 if oh then
     oh.Maid:Destroy()
     oh = nil
