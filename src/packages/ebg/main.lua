@@ -618,7 +618,7 @@ return {
                                 local t = (i / NUMS_OF_PREDICTIONS) * FIXED_TIME_SCALE
                                 local p
                                 if (flipsHolder ~= nil) then
-                                    if flipsHolder:FindFirstChildOfClass("BodyPosition") or flipsHolder:FindFirstChildOfClass("BodyForce") then
+                                    if flipsHolder:FindFirstChildOfClass("BodyPosition") or flipsHolder:FindFirstChildOfClass("BodyForce") or hrp.Parent.Humanoid.FloorMateral == Enum.Material.Air then
                                         p = hrp.Position
                                     else
                                         p = hrp.Position + velocity * t + 0.5 * accel * (t * t)
@@ -927,10 +927,10 @@ return {
                                         local c = {}
                                         for i = 1, 5 do
                                             for _, v in ipairs(game.Players.GetPlayers(game.Players)) do
-                                                if v == Players.LocalPlayer then continue end
                                                 c[#c+1] = v.Character
                                             end
                                         end
+                                        c[#c+1] = Players.LocalPlayer
                                         return old(self, unpack{
                                             [1] = Vector3.new(0, 10e5, 0),
                                             [2] = c
