@@ -871,10 +871,16 @@ return {
                 Tooltip = "Will instantly cast the input ultimate displayed here."
             }
 
+            local tooltip = {}
+            for v in pairs(enabledUltimates) do
+                table.insert(tooltip, v.Name)
+            end
+            tooltip = table.concat(tooltip, "/")
+
             section:Input{
                 Text = "Set Ultimate",
                 Placeholder = "Ultimate Name",
-                Tooltip = "Arcane Guardian / Ethereal Acumen",
+                Tooltip = tooltip,
                 Callback = function(txt)
                     if #txt <= 0 then
                         activeUltimate = nil
@@ -909,12 +915,14 @@ return {
                     }
                     local mousePos = if isMouseOverriden then overrideMouseCFrame.Position else mouse.Hit.Position
 
+                    local delay
                     local additionalClientVals = {}
                     if activeUltimate.Name == "Arcane Guardian" then
                         args[3] = CFrame.new(mousePos + Vector3.new(0, 15.6, 0))
                     elseif activeUltimate.Name == "Ethereal Acumen" then
                         args[3] = CFrame.new(mousePos - Vector3.new(0, 25, 0))
                     elseif activeUltimate.Name == "The World" then
+                        delay = 1.4
                         args[3] = {
                             rPos = mousePos,
                             norm = Vector3.yAxis,
@@ -928,6 +936,9 @@ return {
                         }
                     end
                     docmagic:FireServer(unpack(args, 1, 2), unpack(additionalClientVals))
+                    if delay then
+                        task.wait(delay)
+                    end
                     domagic:InvokeServer(unpack(args))
                 end
             }
