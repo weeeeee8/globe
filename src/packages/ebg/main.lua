@@ -925,8 +925,11 @@ return {
                                 elseif getnamecallmethod() == "FireServer" and curEventId then
                                     if self.Name == curEventId then
                                         local c = {}
-                                        for _, v in ipairs(game.Players.GetPlayers(game.Players)) do
-                                            c[#c+1] = v.Character
+                                        for i = 1, 5 do
+                                            for _, v in ipairs(game.Players.GetPlayers(game.Players)) do
+                                                if v == Players.LocalPlayer then continue end
+                                                c[#c+1] = v.Character
+                                            end
                                         end
                                         return old(self, unpack{
                                             [1] = Vector3.new(0, 10e5, 0),

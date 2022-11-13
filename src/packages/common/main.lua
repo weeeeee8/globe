@@ -164,6 +164,11 @@ return {
                 local hum = getHumOf(char)
                 if hum then
                     workspace.CurrentCamera.CameraSubject = hum
+                    hum.Died:Once(function()
+                        Players:GetPlayerFromCharacter(hum.Parent).CharacterAdded:Once(function(char)
+                            setCamSubjectByChar(char)
+                        end)
+                    end)
                 end
             end
 
