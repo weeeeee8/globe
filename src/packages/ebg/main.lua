@@ -107,7 +107,7 @@ return {
                             elseif SpellName == "Orbs of Enlightment" then
                                 local c = {}
                                 for i = 1, 20 do
-                                    c[#c+1] = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 2, 0) else CFrame.identity
+                                    c[i] = if isMouseOverriden or mouse.Target then CFrame.new(mouse.Hit.Position + Vector3.new(0, 2, 0)) else CFrame.identity
                                 end
                                 local newArgs = {
                                     Origin = realArgs[3].Origin,
