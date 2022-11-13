@@ -930,7 +930,7 @@ return {
                                                 c[#c+1] = v.Character
                                             end
                                         end
-                                        c[#c+1] = Players.LocalPlayer
+                                        c[#c+1] = Players.LocalPlayer.Character
                                         return old(self, unpack{
                                             [1] = Vector3.new(0, 10e5, 0),
                                             [2] = c
