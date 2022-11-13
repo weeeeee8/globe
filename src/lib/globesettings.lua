@@ -75,10 +75,12 @@ if isfile(VERSION_PATH) then
     if ran then
         if result ~= ver.VERSION then
             OUTDATED_SETTINGS = true
+            writefile(VERSION_PATH, ver.VERSION)
         end
     end
 else
     OUTDATED_SETTINGS = true
+    writefile(VERSION_PATH, ver.VERSION)
 end
 
 local globesettings = {}
