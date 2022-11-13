@@ -917,10 +917,6 @@ return {
 
                     local delay
                     local additionalClientVals = {}
-                    docmagic:FireServer(unpack(args), unpack(additionalClientVals))
-                    if delay then
-                        task.wait(delay)
-                    end
                     if activeUltimate.Name == "Arcane Guardian" then
                         args[3] = CFrame.new(mousePos + Vector3.new(0, 15.6, 0))
                     elseif activeUltimate.Name == "Ethereal Acumen" then
@@ -935,10 +931,13 @@ return {
 
                         additionalClientVals[1] = mousePos
                     elseif activeUltimate.Name == "Void Opening" then
-                        delay = 1.4
                         args[3] = {
                             pos = mousePos
                         }
+                    end
+                    docmagic:FireServer(unpack(args), unpack(additionalClientVals))
+                    if delay then
+                        task.wait(delay)
                     end
                     domagic:InvokeServer(unpack(args))
                 end
