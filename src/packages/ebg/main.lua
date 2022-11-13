@@ -919,7 +919,7 @@ return {
                     if activeUltimate.Name == "Arcane Guardian" then
                     elseif activeUltimate.Name == "Ethereal Acumen" then
                     elseif activeUltimate.Name == "The World" then
-                        delay = 1.4
+                        delay = 2.1
                         args[3] = mousePos
                     elseif activeUltimate.Name == "Void Opening" then
                         delay = 1.4
