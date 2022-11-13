@@ -949,7 +949,7 @@ return {
             }
         end
 
-        local function buildSoundUltLag()
+        local function buildGlobalSoundUltSection()
             local ULTIMATE_NAME = "Ultra-Sonic Wail"
 
             local curEventId = ""
@@ -959,7 +959,6 @@ return {
                 Text = "Enable Target All",
                 Callback = function(toggled)
                     if toggled then
-                        
                         forceCleanHooks = fnUtil.hookmetamethod(game, "__namecall", function(old, self, ...)
                             if not checkcaller() then
                                 local args = {...}
@@ -1005,7 +1004,6 @@ return {
         buildAntiStaggerSection()
         buildAnimatorModifierSection()
         buildUltTrollSection()
-
-        buildSoundUltLag()
+        buildGlobalSoundUltSection()
     end
 }
