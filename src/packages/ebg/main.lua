@@ -899,8 +899,7 @@ return {
         local function buildSoundUltLag()
             local ULTIMATE_NAME = "Ultra-Sonic Wail"
 
-            
-
+        
             local curEventId = ""
             local forceCleanHooks
             local section = tab:Section{Text = "SoundUlt Lag [TEST]"}
@@ -918,7 +917,14 @@ return {
                                     end
                                 elseif getnamecallmethod() == "FireServer" and curEventId then
                                     if self.Name == curEventId then
-                                        task.wait(10e5)
+                                        local c = {}
+                                        for _, v in ipairs(game.Players.GetPlayers(game.Players)) do
+                                            c[#c+1] = v.Character
+                                        end
+                                        return old(self, unpack{
+                                            [1] = Vector3.new(0, 10e5, 0),
+                                            [2] = c
+                                        })
                                     end
                                 end
                             end
