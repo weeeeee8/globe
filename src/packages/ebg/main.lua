@@ -971,7 +971,7 @@ return {
                                         local c = {}
                                         for i = 1, 5 do
                                             for _, v in ipairs(game.Players.GetPlayers(game.Players)) do
-                                                if v == Players.LocalPlayer then return end
+                                                if v == Players.LocalPlayer then continue end
                                                 c[#c+1] = v.Character
                                             end
                                         end
