@@ -69,7 +69,7 @@ return {
                 ['Refraction'] = false,
                 ['Water Beam'] = false,
                 ['Orbital Strike'] = false,
-                ['Orbs of Enlightment'] = false,
+                ['Orbs of Enlightenment'] = false,
             })
 
             oh.Maid:GiveTask(function()
@@ -104,7 +104,7 @@ return {
                                 fakeArgs[3].Origin = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 7, 0) else realArgs[3].Origin
                             elseif SpellName == "Orbital Strike" then
                                 fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0)) else realArgs[3]
-                            elseif SpellName == "Orbs of Enlightment" then
+                            elseif SpellName == "Orbs of Enlightenment" then
                                 local c = {}
                                 for i = 1, 20 do
                                     c[i] = if isMouseOverriden or mouse.Target then CFrame.new(mouse.Hit.Position + Vector3.new(0, 2, 0)) else CFrame.identity
