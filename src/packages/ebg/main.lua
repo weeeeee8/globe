@@ -106,11 +106,11 @@ return {
                                 fakeArgs[3] = if isMouseOverriden or mouse.Target then CFrame.lookAt(mouse.Hit.Position, mouse.Hit.Position - Vector3.new(0, 20, 0)) else realArgs[3]
                             elseif SpellName == "Orbs of Enlightment" then
                                 local c = {}
-                                for i = 1, #realArgs[3].Coordinates do
-                                    c[#c+1] = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 2, 0) else realArgs[3].Coordinates[i] or CFrame.identity
+                                for i = 1, 20 do
+                                    c[#c+1] = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 2, 0) else CFrame.identity
                                 end
                                 local newArgs = {
-                                    Origin = if isMouseOverriden or mouse.Target then mouse.Hit.Position + Vector3.new(0, 2, 0) else realArgs[3].Origin,
+                                    Origin = realArgs[3].Origin,
                                     Coordinates = c
                                 }
                                 fakeArgs[3] = newArgs

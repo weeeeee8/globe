@@ -19,7 +19,7 @@ local function createFolder(path)
     end
 end
 
-local function createSettingClass(path, template)
+local function createSettingClass(path, template, groupName)
     local settingsClass = setmetatable({
         env = {}
     }, {
@@ -57,7 +57,7 @@ local function createSettingClass(path, template)
         if OUTDATED_SETTINGS then
             StarterGui:SetCore("SendNotification", {
                 Title = "[GLOBE]",
-                Text = "Outdated settings, previous saved settings are not loaded",
+                Text = string.format('Setting group "%s" is outdated, previous saved setting is not applied', if groupName then groupName else "Undefined setting group"),
             })
         end
     end
@@ -90,7 +90,7 @@ function globesettings.group(groupName)
     local pathName = SAVED_SETTINGS_PATH .. "/" .. groupName
     createFolder(pathName)
     return function(name, template)
-        return createSettingClass(pathName .. "/" .. name .. ".txt", template)
+        return createSettingClass(pathName .. "/" .. name .. ".txt", template, groupName)
     end
 end
 
