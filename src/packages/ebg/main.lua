@@ -935,7 +935,7 @@ return {
                         args[3] = CFrame.new(mousePos - Vector3.new(0, 25, 0))
                     elseif activeUltimate.Name == "The World" then
                         args[3] = {
-                            rPos = mousePos,
+                            rPos = mousePos + Vector3.new(0, 5, 0),
                             norm = Vector3.yAxis,
                             rhit = workspace.Map.Part
                         }
