@@ -790,7 +790,7 @@ return {
                         if not enabled then return end
                         if set[c.ClassName] then
                             if v.Name ~= "HumanoidRootPart" and c:IsA("BodyVelocity") then return end
-                            if c:IsA("BodyVelocity") and (c.Name ~= "flyvel") then return end
+                            if c:IsA("BodyVelocity") and (c.Name:lower() ~= "flyvel") then return end
                             task.delay(0.03, c.Destroy, c)
                         end
                     end)
