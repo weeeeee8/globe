@@ -1,8 +1,14 @@
 local HttpService = game:GetService("HttpService")
+local StarterGui = game:GetService("StarterGui")
 assert(isfolder and makefolder, "Executor does not support 'isfolder' and 'makefolder'")
 
 local SAVED_SETTINGS_PATH = 'globe/savedsettings'
 local SPECIAL_KEY_CHARACTER = '$' -- prevent duplicate values from [self.env] and self itself incase
+
+local VERSION_PATH = 'globe/version.txt'
+local OUTDATED_SETTINGS = false
+
+local ver = import('lib/version')
 
 local stack = import('lib/stack')
 stack = stack.new()
@@ -44,8 +50,15 @@ local function createSettingClass(path, template)
 
     if isfile(path) then
         local ran, result = pcall(readfile, path)
-        if ran then
+        if ran and not OUTDATED_SETTINGS then
             settingsClass.env = HttpService:JSONDecode(result) -- override the current environment
+        end
+
+        if OUTDATED_SETTINGS then
+            StarterGui:SetCore("SendNotification", {
+                Title = "[GLOBE]",
+                Text = "Outdated settings, previous saved settings are not loaded",
+            })
         end
     end
 
@@ -56,6 +69,17 @@ end
 
 createFolder('globe')
 createFolder(SAVED_SETTINGS_PATH)
+
+if isfile(VERSION_PATH) then
+    local ran, result = pcall(readfile, VERSION_PATH)
+    if ran then
+        if result ~= ver.VERSION then
+            OUTDATED_SETTINGS = true
+        end
+    end
+else
+    OUTDATED_SETTINGS = true
+end
 
 local globesettings = {}
 function globesettings.new(path, template)
