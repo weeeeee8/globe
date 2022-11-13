@@ -110,7 +110,7 @@ return {
                                     c[i] = if isMouseOverriden or mouse.Target then CFrame.new(mouse.Hit.Position + Vector3.new(0, 2, 0)) else CFrame.identity
                                 end
                                 local newArgs = {
-                                    Origin = realArgs[3].Origin,
+                                    Origin = if isMouseOverriden or mouse.Target then CFrame.new(mouse.Hit.Position + Vector3.new(0, 2, 0)) else realArgs[3].Origin,
                                     Coordinates = c
                                 }
                                 fakeArgs[3] = newArgs
