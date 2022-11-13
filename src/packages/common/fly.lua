@@ -22,6 +22,33 @@ local function getHum()
     return Players.LocalPlayer.Character:FindFirstChild("Humanoid")
 end
 
+local function constructFlyStuff()
+    if velocityObject then
+        velocityObject:Destroy()
+        velocityObject = nil
+    end
+
+    if gyroObject then
+        gyroObject:Destroy()
+        gyroObject = nil
+    end
+    
+    local velocity = Instance.new("BodyVelocity")
+    velocity.P = 2500
+    velocity.Velocity = Vector3.zero
+    velocity.MaxForce = Vector3.one * math.huge
+    velocity.Parent = hrp
+    velocityObject.Name = "flyvel"
+    velocityObject = velocity
+    local gyro = Instance.new("BodyGyro")
+    gyro.P = 10^6
+    gyro.CFrame = hrp.CFrame
+    gyro.Name = "flylook"
+    gyro.MaxTorque = Vector3.one * 10^6
+    gyro.Parent = hrp
+    gyroObject = gyro
+end
+
 return {
     Start = function()
         oh.Maid:GiveTask(function()
@@ -59,11 +86,11 @@ return {
                     f -= workspace.CurrentCamera.CFrame.RightVector * flightSpeed
                 end
                     
-                if velocityObject then
+                if velocityObject and gyroObject then
                     velocityObject.Velocity = f
-                end
-                if gyroObject then
                     gyroObject.CFrame = workspace.CurrentCamera.CFrame
+                else
+                    constructFlyStuff()
                 end
             end
         end))
@@ -129,30 +156,7 @@ return {
             end
 
             if not hrp then return end
-            if velocityObject then
-                velocityObject:Destroy()
-                velocityObject = nil
-            end
-
-            if gyroObject then
-                gyroObject:Destroy()
-                gyroObject = nil
-            end
-            
-            local velocity = Instance.new("BodyVelocity")
-            velocity.P = 2500
-            velocity.Velocity = Vector3.zero
-            velocity.MaxForce = Vector3.one * math.huge
-            velocity.Parent = hrp
-            velocityObject.Name = "flyvel"
-            velocityObject = velocity
-            local gyro = Instance.new("BodyGyro")
-            gyro.P = 10^6
-            gyro.CFrame = hrp.CFrame
-            gyro.Name = "flylook"
-            gyro.MaxTorque = Vector3.one * 10^6
-            gyro.Parent = hrp
-            gyroObject = gyro
+            constructFlyStuff()
         else
             if velocityObject then
                 velocityObject:Destroy()
