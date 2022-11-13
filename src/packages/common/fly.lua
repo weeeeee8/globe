@@ -144,10 +144,12 @@ return {
             velocity.Velocity = Vector3.zero
             velocity.MaxForce = Vector3.one * math.huge
             velocity.Parent = hrp
+            velocityObject.Name = "flyvel"
             velocityObject = velocity
             local gyro = Instance.new("BodyGyro")
             gyro.P = 10^6
             gyro.CFrame = hrp.CFrame
+            gyro.Name = "flylook"
             gyro.MaxTorque = Vector3.one * 10^6
             gyro.Parent = hrp
             gyroObject = gyro
