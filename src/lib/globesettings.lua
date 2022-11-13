@@ -90,7 +90,7 @@ function globesettings.group(groupName)
     local pathName = SAVED_SETTINGS_PATH .. "/" .. groupName
     createFolder(pathName)
     return function(name, template)
-        return createSettingClass(pathName .. "/" .. name .. ".txt", template, groupName)
+        return createSettingClass(pathName .. "/" .. name .. ".txt", template, name)
     end
 end
 

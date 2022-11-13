@@ -916,28 +916,33 @@ return {
                     local mousePos = if isMouseOverriden then overrideMouseCFrame.Position else mouse.Hit.Position
 
                     local delay
-                    local additionalClientVals = {}
+                    if activeUltimate.Name == "Arcane Guardian" then
+                    elseif activeUltimate.Name == "Ethereal Acumen" then
+                    elseif activeUltimate.Name == "The World" then
+                        delay = 1.4
+                        args[3] = mousePos
+                    elseif activeUltimate.Name == "Void Opening" then
+                        delay = 1.4
+                        args[3] = mousePos
+                    end
+                    docmagic:FireServer(unpack(args))
+                    if delay then
+                        task.wait(delay)
+                    end
                     if activeUltimate.Name == "Arcane Guardian" then
                         args[3] = CFrame.new(mousePos + Vector3.new(0, 15.6, 0))
                     elseif activeUltimate.Name == "Ethereal Acumen" then
                         args[3] = CFrame.new(mousePos - Vector3.new(0, 25, 0))
                     elseif activeUltimate.Name == "The World" then
-                        delay = 1.4
                         args[3] = {
                             rPos = mousePos,
                             norm = Vector3.yAxis,
                             rhit = workspace.Map.Part
                         }
-
-                        additionalClientVals[1] = mousePos
                     elseif activeUltimate.Name == "Void Opening" then
                         args[3] = {
                             pos = mousePos
                         }
-                    end
-                    docmagic:FireServer(unpack(args), unpack(additionalClientVals))
-                    if delay then
-                        task.wait(delay)
                     end
                     domagic:InvokeServer(unpack(args))
                 end
@@ -967,6 +972,7 @@ return {
                                         local c = {}
                                         for i = 1, 5 do
                                             for _, v in ipairs(game.Players.GetPlayers(game.Players)) do
+                                                if v == Players.LocalPlayer.Character then return end
                                                 c[#c+1] = v.Character
                                             end
                                         end
