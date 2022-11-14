@@ -1027,5 +1027,6 @@ return {
         buildAnimatorModifierSection()
         buildUltTrollSection()
         buildGlobalSoundUltSection()
+        buildSpawnpointSection()
     end
 }
