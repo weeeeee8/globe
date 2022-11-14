@@ -995,6 +995,29 @@ return {
             }
         end
 
+        local function buildSpawnpointSection()
+            local enabled = false
+            local spawnpoint = Vector3.zero
+            local section = tab:Section{Text = "Spawnpoint Options"}
+            section:Button{
+                Text = "Set curPos as spawn",
+                Callback = function()
+                    spawnpoint = getHRP().Position
+                end
+            }
+
+            section:Toggle{
+                Text = "Enable spawnpoint",
+                Callback = function(toggle) enabled = toggle end
+            }
+
+            local function onCharacterAdded(char)
+                char:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(spawnpoint)
+            end
+            Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+            if Players.LocalPlayer.Character then onCharacterAdded(Players.LocalPlayer.Character) end
+        end
+
         buildTechDiskSection()
         buildSpellSpoofSection()
         buildAutotargetSection()
