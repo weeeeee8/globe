@@ -1012,6 +1012,7 @@ return {
             }
 
             local function onCharacterAdded(char)
+                if not enabled then return end
                 char:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(spawnpoint)
             end
             oh.Maid:GiveTask(Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded))
