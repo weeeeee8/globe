@@ -1014,7 +1014,7 @@ return {
             local function onCharacterAdded(char)
                 char:WaitForChild("HumanoidRootPart").CFrame = CFrame.new(spawnpoint)
             end
-            Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded)
+            oh.Maid:GiveTask(Players.LocalPlayer.CharacterAdded:Connect(onCharacterAdded))
             if Players.LocalPlayer.Character then onCharacterAdded(Players.LocalPlayer.Character) end
         end
 
