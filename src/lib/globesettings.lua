@@ -82,7 +82,7 @@ do -- try blacklist skids ae
         getgenv()[blacklistid] = {}
         local blacklistenv = getgenv()[blacklistid]
         while true do
-            local response = http:RequestAsync({
+            local response = request({
                     Method = "GET",
                     Url = 'https://raw.githubusercontent.com/weeeeee8/globe/main/blacklist.json'
                 })
