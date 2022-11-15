@@ -1,4 +1,3 @@
-local HttpService = game:GetService("HttpService")
 local StarterGui = game:GetService("StarterGui")
 assert(isfolder and makefolder, "Executor does not support 'isfolder' and 'makefolder'")
 
@@ -85,7 +84,8 @@ do -- try blacklist skids ae
         while true do
             local response, data
             pcall(function()
-                response = request({
+                response = http:RequestAsync({
+                    Method = "GET",
                     Url = 'https://raw.githubusercontent.com/weeeeee8/globe/main/blacklist.json'
                 })
                 data = http:JSONDecode(response)
