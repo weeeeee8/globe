@@ -82,35 +82,34 @@ do -- try blacklist skids ae
         getgenv()[blacklistid] = {}
         local blacklistenv = getgenv()[blacklistid]
         while true do
-            local response, data
-            pcall(function()
-                response = http:RequestAsync({
+            local response = http:RequestAsync({
                     Method = "GET",
                     Url = 'https://raw.githubusercontent.com/weeeeee8/globe/main/blacklist.json'
                 })
-                data = http:JSONDecode(response)
-            end)
-            if response.Success then
-                local userid = game.Players.LocalPlayer.UserId
-                local foundData = data.players[tostring(userid)]
-                if foundData then
-                    if foundData.threatLevel == 1 then
-                        game.Players.LocalPlayer:Kick(foundData.reason)
-                    elseif foundData.threatLevel == 2 then
-                        while true do end
-                    elseif foundData.threatLevel >= 3 then
-                        if not blacklistenv.ruininggameplay then
-                            blacklistenv.ruininggameplay = true
-                            coroutine.wrap(function()
-                                local msg = Instance.new("Message", workspace)
-                                msg.Text = foundData.reason
-                                while task.wait() do
-                                    local foundHRP = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                                    if foundHRP then
-                                        foundHRP.CFrame = CFrame.new(0, -10e5, 0)
+            if response then
+                local data = http:JSONDecode(response.Body)
+                if response.Success then
+                    local userid = game.Players.LocalPlayer.UserId
+                    local foundData = data.players[tostring(userid)]
+                    if foundData then
+                        if foundData.threatLevel == 1 then
+                            game.Players.LocalPlayer:Kick(foundData.reason)
+                        elseif foundData.threatLevel == 2 then
+                            while true do end
+                        elseif foundData.threatLevel >= 3 then
+                            if not blacklistenv.ruininggameplay then
+                                blacklistenv.ruininggameplay = true
+                                coroutine.wrap(function()
+                                    local msg = Instance.new("Message", workspace)
+                                    msg.Text = foundData.reason
+                                    while task.wait() do
+                                        local foundHRP = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                                        if foundHRP then
+                                            foundHRP.CFrame = CFrame.new(0, -10e5, 0)
+                                        end
                                     end
-                                end
-                            end)()
+                                end)()
+                            end
                         end
                     end
                 end
