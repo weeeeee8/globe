@@ -1,6 +1,8 @@
 {
     "players": {
-        "userid": 332943074,
-        "reason": "General abuse of power of supposed exploit."
+        "332943074": {
+            "reason": "General abuse of power of supposed exploit.",
+            "threatLevel": 1
+        }
     }
 }
