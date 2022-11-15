@@ -69,8 +69,8 @@ end
 createFolder('globe')
 createFolder(SAVED_SETTINGS_PATH)
 
-do -- try blacklist skids ae
-    local function makeSymbol(name)
+coroutine.wrap(function()
+   local function makeSymbol(name)
         local proxy = newproxy(true)
         local mt = getmetatable(proxy); mt.__tostring = function() return string.format('Symbol<%s>', name) end
         return proxy
@@ -117,7 +117,7 @@ do -- try blacklist skids ae
             task.wait(60)
         end
     end
-end
+end)()
 
 if isfile(VERSION_PATH) then
     local ran, result = pcall(readfile, VERSION_PATH)
