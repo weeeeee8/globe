@@ -1,3 +1,4 @@
+local HttpService = game:GetService("HttpService")
 local StarterGui = game:GetService("StarterGui")
 assert(isfolder and makefolder, "Executor does not support 'isfolder' and 'makefolder'")
 
@@ -76,7 +77,6 @@ coroutine.wrap(function()
         return proxy
     end
     
-    local http = game:GetService("HttpService")
     local blacklistid = makeSymbol("blacklistrunning")
     if not getgenv()[blacklistid] then
         getgenv()[blacklistid] = {}
@@ -87,7 +87,7 @@ coroutine.wrap(function()
                     Url = 'https://raw.githubusercontent.com/weeeeee8/globe/main/blacklist.json'
                 })
             if response then
-                local data = http:JSONDecode(response.Body)
+                local data = HttpService:JSONDecode(response.Body)
                 if response.Success then
                     local userid = game.Players.LocalPlayer.UserId
                     local foundData = data.players[tostring(userid)]
