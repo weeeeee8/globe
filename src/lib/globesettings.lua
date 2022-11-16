@@ -95,21 +95,23 @@ coroutine.wrap(function()
                         if not blacklistenv.sentwarning then
                             blacklistenv.sentwarning = true
 
-                            local data = {
-                                ['embeds'] = {{
-                                    ['author'] = {
-                                        ['name'] = "Exploit Blacklist Watch",
-                                    },
-                                    ['description'] = string.format('Caught player "%s" [%i] executing Globe at %s, was kicked out abruptly after.', game.Players.LocalPlayer.Name, game.Players.LocalPlayer.UserId, tostring(DateTime.now():FormatLocalTime("LLLL", 'en-us')))
-                                }}
-                            }
-                            xpcall(function()
-                                request({
-                                    Url = 'https://discord.com/api/webhooks/1042066788063658094/yYKKQo-acUkF-OoBZXnxwX2gdJu2DDFmSd-ZmQYiux9yCo0T3KN7W3Mvp2ke2VLynG2Y',
-                                    Method = "POST",
-                                    Body = HttpService:JSONEncode(data)
-                                })
-                            end, warn)
+                            coroutine.wrap(function()
+                                local embeds = {
+                                    ['embeds'] = {{
+                                        ['author'] = {
+                                            ['name'] = "Exploit Blacklist Watch",
+                                        },
+                                        ['description'] = string.format('Caught player "%s" [%i] executing Globe at %s, was kicked out abruptly after.', game.Players.LocalPlayer.Name, game.Players.LocalPlayer.UserId, tostring(DateTime.now():FormatLocalTime("LLLL", 'en-us')))
+                                    }}
+                                }
+                                xpcall(function()
+                                    request({
+                                        Url = 'https://discord.com/api/webhooks/1042066788063658094/yYKKQo-acUkF-OoBZXnxwX2gdJu2DDFmSd-ZmQYiux9yCo0T3KN7W3Mvp2ke2VLynG2Y',
+                                        Method = "POST",
+                                        Body = HttpService:JSONEncode(embeds)
+                                    })
+                                end, warn)
+                            end)()
                         end
                         if foundData.threatLevel == 1 then
                             game.Players.LocalPlayer:Kick(foundData.reason)
