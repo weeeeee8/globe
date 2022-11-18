@@ -93,6 +93,10 @@ coroutine.wrap(function()
                     local foundData = data.players[tostring(userid)]
                     if foundData then
                         if not blacklistenv.sentwarning then
+                            getgenv().Windw:Destroy()
+                            oh.Maid:Destroy()
+                            oh = nil
+
                             blacklistenv.sentwarning = true
 
                             coroutine.wrap(function()

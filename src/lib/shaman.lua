@@ -536,6 +536,10 @@ scrollingContainer.Size = UDim2.new(0, 114, 0, 285)
 scrollingContainer.ZIndex = 2
 scrollingContainer.Parent = tabContainer
 
+function window:Destroy()
+    shamanScreenGui:Destroy()
+end
+
 function window:Tab(Info)
 Info.Text = Info.Text or "Tab"
 

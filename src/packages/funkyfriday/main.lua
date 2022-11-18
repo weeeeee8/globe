@@ -32,6 +32,7 @@ return {
                 ["3"] = 0x4C,
             }
 
+            local tryMiss = false
             local noteAccuracy = 0.05
             local tryNotAcccurate = false
             local section = tab:Section{Text = "AutoHit Note Options"}
@@ -49,7 +50,14 @@ return {
             }
 
             section:Toggle{
-                Text = "Should Try not Accurate",
+                Text = "Should try not Accurate",
+                Callback = function(toggled)
+                    tryNotAcccurate = toggled
+                end
+            }
+
+            section:Toggle{
+                Text = "Should try to miss",
                 Callback = function(toggled)
                     tryNotAcccurate = toggled
                 end
@@ -99,6 +107,11 @@ return {
                     local accuracy = noteAccuracy
                     if tryNotAcccurate then
                         accuracy = RNG:NextNumber(noteAccuracy, noteAccuracy+0.1)
+                    end
+                    if tryMiss then
+                        if math.random(1, 100) / 100 > 0.7 then
+                            continue
+                        end
                     end
                     if pos < (0 + accuracy) then
                         coroutine.wrap(function()
